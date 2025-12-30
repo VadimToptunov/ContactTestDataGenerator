@@ -25,6 +25,17 @@
     <string name="success_title">✓ Успешно!</string>
     <string name="error_title">⚠ Ошибка</string>
     
+    <!-- File History -->
+    <string name="history_title">История файлов</string>
+    <string name="history_empty">Нет файлов</string>
+    <string name="history_empty_description">Созданные VCF-файлы появятся здесь</string>
+    <string name="history_delete">Удалить</string>
+    <string name="history_share">Поделиться</string>
+    <string name="history_clear_all">Очистить всё</string>
+    <string name="history_confirm_delete">Удалить этот файл?</string>
+    <string name="history_confirm_clear">Удалить все файлы?</string>
+    <string name="history_contacts">%d контактов</string>
+    
     <plurals name="contacts_generated">
         <item quantity="one">%d контакт успешно создан!</item>
         <item quantity="few">%d контакта успешно создано!</item>

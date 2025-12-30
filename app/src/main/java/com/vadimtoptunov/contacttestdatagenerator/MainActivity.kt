@@ -8,9 +8,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -45,8 +50,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val fileHistory by viewModel.fileHistory.collectAsStateWithLifecycle()
     var contactCount by remember { mutableStateOf("") }
     var validationError by remember { mutableStateOf<String?>(null) }
+    var historyExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -184,6 +191,18 @@ fun MainScreen(viewModel: MainViewModel) {
                     )
                 }
             }
+            
+            // File History Section
+            if (fileHistory.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                FileHistorySection(
+                    history = fileHistory,
+                    expanded = historyExpanded,
+                    onExpandToggle = { historyExpanded = !historyExpanded },
+                    onShare = { viewModel.shareVcfFile(it.uri) },
+                    onDelete = { viewModel.deleteFile(it) }
+                )
+            }
         }
     }
 }
@@ -236,7 +255,7 @@ fun ProgressSection(
                     text = stringResource(R.string.progress_creating, current, total),
                     style = MaterialTheme.typography.bodyMedium
                 )
-                Text(
+    Text(
                     text = stringResource(R.string.progress_percentage, progress),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
@@ -343,6 +362,126 @@ fun ErrorSection(
                 )
             ) {
                 Text(stringResource(R.string.ok_btn_text))
+            }
+        }
+    }
+}
+
+@Composable
+fun FileHistorySection(
+    history: List<VcfFileInfo>,
+    expanded: Boolean,
+    onExpandToggle: () -> Unit,
+    onShare: (VcfFileInfo) -> Unit,
+    onDelete: (VcfFileInfo) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = stringResource(R.string.history_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${history.size} ${if (history.size == 1) "file" else "files"}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                
+                IconButton(onClick = onExpandToggle) {
+                    Icon(
+                        if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        contentDescription = if (expanded) "Collapse" else "Expand"
+                    )
+                }
+            }
+            
+            // History list
+            AnimatedVisibility(visible = expanded) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 300.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    items(history) { file ->
+                        FileHistoryItem(
+                            file = file,
+                            onShare = { onShare(file) },
+                            onDelete = { onDelete(file) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FileHistoryItem(
+    file: VcfFileInfo,
+    onShare: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.history_contacts, file.contactCount),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = "${file.fileSizeFormatted} • ${file.dateFormatted}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                IconButton(onClick = onShare) {
+                    Icon(
+                        Icons.Default.Share,
+                        contentDescription = stringResource(R.string.history_share),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.history_delete),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
         }
     }

@@ -25,6 +25,17 @@
     <string name="success_title">✓ Success!</string>
     <string name="error_title">⚠ Error</string>
     
+    <!-- File History -->
+    <string name="history_title">File History</string>
+    <string name="history_empty">No files yet</string>
+    <string name="history_empty_description">Generated VCF files will appear here</string>
+    <string name="history_delete">Delete</string>
+    <string name="history_share">Share</string>
+    <string name="history_clear_all">Clear all</string>
+    <string name="history_confirm_delete">Delete this file?</string>
+    <string name="history_confirm_clear">Delete all files?</string>
+    <string name="history_contacts">%d contacts</string>
+    
     <plurals name="contacts_generated">
         <item quantity="one">%d contact generated successfully!</item>
         <item quantity="other">%d contacts generated successfully!</item>

@@ -19,9 +19,24 @@ import kotlinx.coroutines.launch
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val vcfGenerator = VcfGenerator(application)
+    private val fileHistoryRepository = FileHistoryRepository(application)
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+    
+    private val _fileHistory = MutableStateFlow<List<VcfFileInfo>>(emptyList())
+    val fileHistory: StateFlow<List<VcfFileInfo>> = _fileHistory.asStateFlow()
+    
     private var currentJob: Job? = null
+
+    init {
+        loadHistory()
+    }
+    
+    private fun loadHistory() {
+        viewModelScope.launch {
+            _fileHistory.value = fileHistoryRepository.getHistory()
+        }
+    }
 
     fun startGenerating(count: Int) {
         val context = getApplication<Application>()
@@ -41,9 +56,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _uiState.value = UiState.Loading(current = 0, total = count)
             
             try {
-                val fileUri = vcfGenerator.generateVcfFile(count) { current, total ->
+                val (fileUri, fileSize) = vcfGenerator.generateVcfFile(count) { current, total ->
                     _uiState.value = UiState.Loading(current = current, total = total)
                 }
+                
+                // Save to history
+                val fileInfo = VcfFileInfo(
+                    uri = fileUri,
+                    fileName = fileUri.lastPathSegment ?: "contacts.vcf",
+                    contactCount = count,
+                    fileSizeBytes = fileSize
+                )
+                fileHistoryRepository.addFile(fileInfo)
+                loadHistory()
                 
                 _uiState.value = UiState.Success(
                     message = "$count contact${if (count > 1) "s" else ""} generated successfully!",
@@ -79,6 +104,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val chooserIntent = Intent.createChooser(shareIntent, "Share contacts")
         chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(chooserIntent)
+    }
+    
+    fun deleteFile(fileInfo: VcfFileInfo) {
+        viewModelScope.launch {
+            fileHistoryRepository.deleteFile(fileInfo)
+            loadHistory()
+        }
+    }
+    
+    fun clearHistory() {
+        viewModelScope.launch {
+            fileHistoryRepository.clearHistory()
+            loadHistory()
+        }
     }
 
     companion object {

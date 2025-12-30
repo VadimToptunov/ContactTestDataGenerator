@@ -18,12 +18,12 @@ class VcfGenerator(private val context: Context) {
      * Generates a VCF file with specified number of contacts
      * @param count Number of contacts to generate
      * @param onProgress Callback for progress updates
-     * @return Uri of the generated VCF file
+     * @return Pair of Uri and File size in bytes
      */
     suspend fun generateVcfFile(
         count: Int,
         onProgress: (current: Int, total: Int) -> Unit
-    ): Uri = withContext(Dispatchers.IO) {
+    ): Pair<Uri, Long> = withContext(Dispatchers.IO) {
         val fileName = "contacts_${System.currentTimeMillis()}.vcf"
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
         
@@ -39,11 +39,13 @@ class VcfGenerator(private val context: Context) {
             }
         }
         
-        FileProvider.getUriForFile(
+        val uri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
             file
         )
+        
+        Pair(uri, file.length())
     }
 
     /**

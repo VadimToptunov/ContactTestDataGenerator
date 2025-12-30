@@ -36,6 +36,22 @@
     <string name="history_confirm_clear">Delete all files?</string>
     <string name="history_contacts">%d contacts</string>
     
+    <!-- Premium / Billing -->
+    <string name="premium_badge">PRO</string>
+    <string name="premium_title">Upgrade to Pro</string>
+    <string name="premium_description">Unlock all features</string>
+    <string name="premium_feature_1">Generate up to 10,000 contacts</string>
+    <string name="premium_feature_2">Unlimited file history</string>
+    <string name="premium_feature_3">Priority support</string>
+    <string name="premium_feature_4">No ads (future)</string>
+    <string name="premium_price">$2.99</string>
+    <string name="premium_button">Upgrade to Pro</string>
+    <string name="premium_restore">Restore purchases</string>
+    <string name="premium_thanks">Thank you for your support!</string>
+    <string name="premium_limit_reached">Upgrade to Pro for up to 10,000 contacts</string>
+    <string name="free_limit">Free: up to 1,000 contacts</string>
+    <string name="pro_limit">Pro: up to 10,000 contacts</string>
+    
     <plurals name="contacts_generated">
         <item quantity="one">%d contact generated successfully!</item>
         <item quantity="other">%d contacts generated successfully!</item>

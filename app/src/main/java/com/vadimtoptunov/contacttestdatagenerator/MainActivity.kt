@@ -17,13 +17,16 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vadimtoptunov.contacttestdatagenerator.ui.theme.ContactTestDataGeneratorTheme
@@ -51,14 +54,53 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(viewModel: MainViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val fileHistory by viewModel.fileHistory.collectAsStateWithLifecycle()
+    val isPremium by viewModel.billingManager.isPremium.collectAsStateWithLifecycle()
+    val purchaseState by viewModel.billingManager.purchaseState.collectAsStateWithLifecycle()
+    
     var contactCount by remember { mutableStateOf("") }
     var validationError by remember { mutableStateOf<String?>(null) }
     var historyExpanded by remember { mutableStateOf(false) }
+    var showPremiumDialog by remember { mutableStateOf(false) }
+    
+    val context = LocalContext.current
+    val activity = context as? ComponentActivity
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_title)) },
+                title = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(stringResource(R.string.app_title))
+                        if (isPremium) {
+                            Surface(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                shape = MaterialTheme.shapes.small
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.premium_badge),
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onTertiary
+                                )
+                            }
+                        }
+                    }
+                },
+                actions = {
+                    if (!isPremium) {
+                        IconButton(onClick = { showPremiumDialog = true }) {
+                            Icon(
+                                Icons.Default.Star,
+                                contentDescription = stringResource(R.string.premium_title),
+                                tint = MaterialTheme.colorScheme.tertiary
+                            )
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -89,6 +131,7 @@ fun MainScreen(viewModel: MainViewModel) {
             Spacer(modifier = Modifier.height(8.dp))
             
             // Input field
+            val maxContacts = if (isPremium) 10000 else 1000
             OutlinedTextField(
                 value = contactCount,
                 onValueChange = { newValue ->
@@ -99,12 +142,16 @@ fun MainScreen(viewModel: MainViewModel) {
                         contactCount.isEmpty() -> null
                         contactCount.toIntOrNull() == null -> stringResource(R.string.error_field_invalid)
                         contactCount.toInt() == 0 -> stringResource(R.string.error_field_zero)
-                        contactCount.toInt() > 10000 -> stringResource(R.string.error_field_too_large)
+                        contactCount.toInt() > maxContacts -> if (isPremium) {
+                            stringResource(R.string.error_field_too_large)
+                        } else {
+                            stringResource(R.string.premium_limit_reached)
+                        }
                         else -> null
                     }
                 },
                 label = { Text(stringResource(R.string.contacts_quantity)) },
-                placeholder = { Text(stringResource(R.string.helper_text)) },
+                placeholder = { Text("Max: ${if (isPremium) "10,000 (Pro)" else "1,000 (Free)"}") },
                 supportingText = {
                     if (validationError != null) {
                         Text(
@@ -203,6 +250,17 @@ fun MainScreen(viewModel: MainViewModel) {
                     onDelete = { viewModel.deleteFile(it) }
                 )
             }
+        }
+        
+        // Premium Dialog
+        if (showPremiumDialog) {
+            PremiumDialog(
+                onDismiss = { showPremiumDialog = false },
+                onPurchase = {
+                    activity?.let { viewModel.purchasePremium(it) }
+                    showPremiumDialog = false
+                }
+            )
         }
     }
 }

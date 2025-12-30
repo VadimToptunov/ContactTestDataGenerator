@@ -1,9 +1,9 @@
 package com.vadimtoptunov.contacttestdatagenerator
 
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
@@ -20,6 +20,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val vcfGenerator = VcfGenerator(application)
     private val fileHistoryRepository = FileHistoryRepository(application)
+    val billingManager = BillingManager(application, viewModelScope)
+    
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
     
@@ -30,6 +32,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         loadHistory()
+        billingManager.queryPurchases()
     }
     
     private fun loadHistory() {
@@ -37,17 +40,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _fileHistory.value = fileHistoryRepository.getHistory()
         }
     }
+    
+    fun getMaxContacts(): Int {
+        return if (billingManager.isPremium.value) {
+            BillingManager.PREMIUM_MAX_CONTACTS
+        } else {
+            BillingManager.FREE_MAX_CONTACTS
+        }
+    }
 
     fun startGenerating(count: Int) {
         val context = getApplication<Application>()
+        val maxContacts = getMaxContacts()
         
         if (count <= 0) {
             _uiState.value = UiState.Error("Number must be positive")
             return
         }
         
-        if (count > MAX_CONTACTS) {
-            _uiState.value = UiState.Error("Maximum $MAX_CONTACTS contacts allowed")
+        if (count > maxContacts) {
+            _uiState.value = UiState.Error("Maximum $maxContacts contacts allowed${if (!billingManager.isPremium.value) " (upgrade to Pro for 10,000)" else ""}")
             return
         }
 
@@ -119,9 +131,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             loadHistory()
         }
     }
-
-    companion object {
-        private const val MAX_CONTACTS = 10000
+    
+    fun purchasePremium(activity: Activity) {
+        billingManager.launchPurchaseFlow(activity)
+    }
+    
+    override fun onCleared() {
+        super.onCleared()
+        billingManager.onDestroy()
     }
 }
 

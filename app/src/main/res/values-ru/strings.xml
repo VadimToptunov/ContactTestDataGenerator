@@ -36,6 +36,22 @@
     <string name="history_confirm_clear">Удалить все файлы?</string>
     <string name="history_contacts">%d контактов</string>
     
+    <!-- Premium / Billing -->
+    <string name="premium_badge">PRO</string>
+    <string name="premium_title">Обновить до Pro</string>
+    <string name="premium_description">Разблокируйте все возможности</string>
+    <string name="premium_feature_1">Генерация до 10,000 контактов</string>
+    <string name="premium_feature_2">Безлимитная история файлов</string>
+    <string name="premium_feature_3">Приоритетная поддержка</string>
+    <string name="premium_feature_4">Без рекламы (в будущем)</string>
+    <string name="premium_price">$2.99</string>
+    <string name="premium_button">Обновить до Pro</string>
+    <string name="premium_restore">Восстановить покупки</string>
+    <string name="premium_thanks">Спасибо за поддержку!</string>
+    <string name="premium_limit_reached">Обновитесь до Pro для генерации до 10,000 контактов</string>
+    <string name="free_limit">Бесплатно: до 1,000 контактов</string>
+    <string name="pro_limit">Pro: до 10,000 контактов</string>
+    
     <plurals name="contacts_generated">
         <item quantity="one">%d контакт успешно создан!</item>
         <item quantity="few">%d контакта успешно создано!</item>

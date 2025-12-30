@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">مولد جهات الاتصال</string>
+    <string name="app_title">مولد جهات الاتصال</string>
+    <string name="app_description">قم بإنشاء جهات اتصال تجريبية بتنسيق VCF. يمكنك مشاركة أو استيراد الملف المُنشأ في أي تطبيق جهات اتصال.</string>
+    <string name="contacts_quantity">عدد جهات الاتصال</string>
+    <string name="helper_text">أدخل من 1 إلى 10,000</string>
+    <string name="generate_btn_text">إنشاء جهات الاتصال</string>
+    <string name="cancel_btn_text">إلغاء</string>
+    <string name="share_btn_text">مشاركة VCF</string>
+    <string name="done_btn_text">تم</string>
+    <string name="ok_btn_text">موافق</string>
+    <string name="error_empty_input">أدخل عدد جهات الاتصال</string>
+    <string name="error_invalid_number">رقم غير صالح</string>
+    <string name="error_max_exceeded">الحد الأقصى %d جهة اتصال في المرة الواحدة</string>
+    <string name="error_must_be_positive">يجب أن يكون العدد أكبر من 0</string>
+    <string name="error_generating">خطأ في إنشاء جهات الاتصال</string>
+    <string name="progress_generating">جارٍ إنشاء جهات الاتصال...</string>
+    <string name="progress_creating">إنشاء جهات الاتصال: %1$d / %2$d</string>
+    <string name="success_title">نجح!</string>
+    <string name="success_message">تم إنشاء %d جهة اتصال بنجاح!</string>
+    <string name="success_message_plural">تم إنشاء %d جهة اتصال بنجاح!</string>
+    <string name="error_title">خطأ</string>
+    
+    <plurals name="contacts_generated">
+        <item quantity="zero">لم يتم إنشاء أي جهة اتصال</item>
+        <item quantity="one">تم إنشاء جهة اتصال واحدة بنجاح!</item>
+        <item quantity="two">تم إنشاء جهتي اتصال بنجاح!</item>
+        <item quantity="few">تم إنشاء %d جهات اتصال بنجاح!</item>
+        <item quantity="many">تم إنشاء %d جهة اتصال بنجاح!</item>
+        <item quantity="other">تم إنشاء %d جهة اتصال بنجاح!</item>
+    </plurals>
+</resources>
+

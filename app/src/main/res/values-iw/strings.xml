@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">מחולל אנשי קשר</string>
+    <string name="app_title">מחולל אנשי קשר</string>
+    <string name="app_description">צור אנשי קשר לבדיקה בפורמט VCF. אתה יכול לשתף או לייבא את הקובץ שנוצר לכל אפליקציית אנשי קשר.</string>
+    <string name="contacts_quantity">מספר אנשי קשר</string>
+    <string name="helper_text">הזן מ-1 עד 10,000</string>
+    <string name="generate_btn_text">צור אנשי קשר</string>
+    <string name="cancel_btn_text">ביטול</string>
+    <string name="share_btn_text">שתף VCF</string>
+    <string name="done_btn_text">סיום</string>
+    <string name="ok_btn_text">אישור</string>
+    <string name="error_empty_input">הזן את מספר אנשי הקשר</string>
+    <string name="error_invalid_number">מספר לא חוקי</string>
+    <string name="error_max_exceeded">מקסימום %d אנשי קשר בכל פעם</string>
+    <string name="error_must_be_positive">המספר חייב להיות גדול מ-0</string>
+    <string name="error_generating">שגיאה ביצירת אנשי קשר</string>
+    <string name="progress_generating">יוצר אנשי קשר...</string>
+    <string name="progress_creating">יצירת אנשי קשר: %1$d / %2$d</string>
+    <string name="success_title">הצלחה!</string>
+    <string name="success_message">איש קשר %d נוצר בהצלחה!</string>
+    <string name="success_message_plural">%d אנשי קשר נוצרו בהצלחה!</string>
+    <string name="error_title">שגיאה</string>
+    
+    <plurals name="contacts_generated">
+        <item quantity="one">איש קשר %d נוצר בהצלחה!</item>
+        <item quantity="two">%d אנשי קשר נוצרו בהצלחה!</item>
+        <item quantity="many">%d אנשי קשר נוצרו בהצלחה!</item>
+        <item quantity="other">%d אנשי קשר נוצרו בהצלחה!</item>
+    </plurals>
+</resources>
+

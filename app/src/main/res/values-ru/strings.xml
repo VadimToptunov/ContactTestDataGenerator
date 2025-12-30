@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">Генератор Контактов</string>
     <string name="app_title">Генератор Контактов</string>
+    <string name="vcf_title">Генератор VCF-файлов</string>
     <string name="app_description">Генерируйте тестовые контакты в формате VCF. Вы можете поделиться или импортировать созданный файл в любое приложение для контактов.</string>
     <string name="contacts_quantity">Количество контактов</string>
-    <string name="helper_text">Введите от 1 до 10 000</string>
+    <string name="helper_text">Введите число (макс. 10 000)</string>
     <string name="generate_btn_text">Создать контакты</string>
     <string name="cancel_btn_text">Отменить</string>
     <string name="share_btn_text">Поделиться VCF</string>
@@ -15,11 +16,10 @@
     <string name="error_must_be_positive">Количество должно быть больше 0</string>
     <string name="error_generating">Ошибка генерации контактов</string>
     <string name="progress_generating">Генерация контактов...</string>
-    <string name="progress_creating">Создание контактов: %1$d / %2$d</string>
-    <string name="success_title">Успешно!</string>
-    <string name="success_message">%d контакт успешно создан!</string>
-    <string name="success_message_plural">%d контактов успешно создано!</string>
-    <string name="error_title">Ошибка</string>
+    <string name="progress_creating">%1$d / %2$d</string>
+    <string name="progress_percentage">%d%%</string>
+    <string name="success_title">✓ Успешно!</string>
+    <string name="error_title">⚠ Ошибка</string>
     
     <plurals name="contacts_generated">
         <item quantity="one">%d контакт успешно создан!</item>

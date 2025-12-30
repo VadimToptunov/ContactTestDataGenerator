@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">تولید کننده مخاطبین</string>
     <string name="app_title">تولید کننده مخاطبین</string>
+    <string name="vcf_title">تولید کننده فایل‌های VCF</string>
     <string name="app_description">مخاطبین آزمایشی را به فرمت VCF تولید کنید. می‌توانید فایل ایجاد شده را به اشتراک بگذارید یا در هر برنامه مخاطبین وارد کنید.</string>
     <string name="contacts_quantity">تعداد مخاطبین</string>
-    <string name="helper_text">از 1 تا 10,000 وارد کنید</string>
+    <string name="helper_text">یک عدد وارد کنید (حداکثر 10,000)</string>
     <string name="generate_btn_text">ایجاد مخاطبین</string>
     <string name="cancel_btn_text">لغو</string>
     <string name="share_btn_text">اشتراک‌گذاری VCF</string>
@@ -15,11 +16,10 @@
     <string name="error_must_be_positive">تعداد باید بیشتر از 0 باشد</string>
     <string name="error_generating">خطا در ایجاد مخاطبین</string>
     <string name="progress_generating">در حال ایجاد مخاطبین...</string>
-    <string name="progress_creating">ایجاد مخاطبین: %1$d / %2$d</string>
-    <string name="success_title">موفق!</string>
-    <string name="success_message">%d مخاطب با موفقیت ایجاد شد!</string>
-    <string name="success_message_plural">%d مخاطب با موفقیت ایجاد شد!</string>
-    <string name="error_title">خطا</string>
+    <string name="progress_creating">%1$d / %2$d</string>
+    <string name="progress_percentage">%d%%</string>
+    <string name="success_title">✓ موفق!</string>
+    <string name="error_title">⚠ خطا</string>
     
     <plurals name="contacts_generated">
         <item quantity="one">%d مخاطب با موفقیت ایجاد شد!</item>

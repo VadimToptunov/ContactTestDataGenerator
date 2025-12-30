@@ -16,9 +16,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vadimtoptunov.contacttestdatagenerator.ui.theme.ContactTestDataGeneratorTheme
@@ -50,7 +50,7 @@ fun MainScreen(viewModel: MainViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Contact Generator") },
+                title = { Text(stringResource(R.string.app_title)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -67,13 +67,13 @@ fun MainScreen(viewModel: MainViewModel) {
         ) {
             // Title and description
             Text(
-                text = "VCF File Generator",
+                text = stringResource(R.string.vcf_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
             
             Text(
-                text = "Generate test contacts in VCF format. You can share or import the generated file into any contacts app.",
+                text = stringResource(R.string.app_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -83,13 +83,22 @@ fun MainScreen(viewModel: MainViewModel) {
             // Input field
             OutlinedTextField(
                 value = contactCount,
-                onValueChange = { contactCount = it },
-                label = { Text("Number of contacts") },
-                placeholder = { Text("Enter a number (max 10,000)") },
+                onValueChange = { newValue ->
+                    val filtered = newValue.filter { it.isDigit() }
+                    val number = filtered.toIntOrNull()
+                    contactCount = when {
+                        filtered.isEmpty() -> ""
+                        number != null && number > 0 && number <= 10000 -> filtered
+                        else -> contactCount // Keep old value if exceeds limit
+                    }
+                },
+                label = { Text(stringResource(R.string.contacts_quantity)) },
+                placeholder = { Text(stringResource(R.string.helper_text)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = uiState is UiState.Idle,
-                singleLine = true
+                singleLine = true,
+                isError = contactCount.isNotEmpty() && (contactCount.toIntOrNull() ?: 0) > 10000
             )
             
             // Generate button
@@ -103,7 +112,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 modifier = Modifier.fillMaxWidth(),
                 enabled = contactCount.isNotBlank() && uiState is UiState.Idle
             ) {
-                Text("Generate Contacts")
+                Text(stringResource(R.string.generate_btn_text))
             }
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -187,13 +196,13 @@ fun ProgressSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Generating contacts...",
+                    text = stringResource(R.string.progress_generating),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 
                 IconButton(onClick = onCancel) {
-                    Icon(Icons.Default.Close, contentDescription = "Cancel")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel_btn_text))
                 }
             }
             
@@ -207,11 +216,11 @@ fun ProgressSection(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "$current / $total",
+                    text = stringResource(R.string.progress_creating, current, total),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "$progress%",
+                    text = stringResource(R.string.progress_percentage, progress),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -239,7 +248,7 @@ fun SuccessSection(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "✓ Success!",
+                text = stringResource(R.string.success_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onTertiaryContainer
@@ -265,14 +274,14 @@ fun SuccessSection(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Share VCF")
+                    Text(stringResource(R.string.share_btn_text))
                 }
                 
                 OutlinedButton(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Done")
+                    Text(stringResource(R.string.done_btn_text))
                 }
             }
         }
@@ -297,7 +306,7 @@ fun ErrorSection(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "⚠ Error",
+                text = stringResource(R.string.error_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onErrorContainer
@@ -316,7 +325,7 @@ fun ErrorSection(
                     containerColor = MaterialTheme.colorScheme.error
                 )
             ) {
-                Text("OK")
+                Text(stringResource(R.string.ok_btn_text))
             }
         }
     }

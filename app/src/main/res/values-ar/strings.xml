@@ -7,6 +7,10 @@
     <string name="helper_text">أدخل رقمًا (بحد أقصى 10,000)</string>
     <string name="generate_btn_text">إنشاء جهات الاتصال</string>
     <string name="cancel_btn_text">إلغاء</string>
+    <string name="error_field_empty">الرجاء إدخال رقم</string>
+    <string name="error_field_invalid">الأرقام فقط مسموحة</string>
+    <string name="error_field_too_large">الحد الأقصى 10,000 جهة اتصال</string>
+    <string name="error_field_zero">يجب أن يكون الرقم أكبر من 0</string>
     <string name="share_btn_text">مشاركة VCF</string>
     <string name="done_btn_text">تم</string>
     <string name="ok_btn_text">موافق</string>

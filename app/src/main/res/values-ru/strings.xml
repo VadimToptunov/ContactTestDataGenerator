@@ -7,6 +7,10 @@
     <string name="helper_text">Введите число (макс. 10 000)</string>
     <string name="generate_btn_text">Создать контакты</string>
     <string name="cancel_btn_text">Отменить</string>
+    <string name="error_field_empty">Пожалуйста, введите число</string>
+    <string name="error_field_invalid">Разрешены только цифры</string>
+    <string name="error_field_too_large">Максимум 10 000 контактов</string>
+    <string name="error_field_zero">Число должно быть больше 0</string>
     <string name="share_btn_text">Поделиться VCF</string>
     <string name="done_btn_text">Готово</string>
     <string name="ok_btn_text">OK</string>

@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(viewModel: MainViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var contactCount by remember { mutableStateOf("") }
+    var validationError by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -84,33 +85,49 @@ fun MainScreen(viewModel: MainViewModel) {
             OutlinedTextField(
                 value = contactCount,
                 onValueChange = { newValue ->
-                    val filtered = newValue.filter { it.isDigit() }
-                    val number = filtered.toIntOrNull()
-                    contactCount = when {
-                        filtered.isEmpty() -> ""
-                        number != null && number > 0 && number <= 10000 -> filtered
-                        else -> contactCount // Keep old value if exceeds limit
+                    contactCount = newValue.filter { it.isDigit() }
+                    
+                    // Update validation error
+                    validationError = when {
+                        contactCount.isEmpty() -> null
+                        contactCount.toIntOrNull() == null -> stringResource(R.string.error_field_invalid)
+                        contactCount.toInt() == 0 -> stringResource(R.string.error_field_zero)
+                        contactCount.toInt() > 10000 -> stringResource(R.string.error_field_too_large)
+                        else -> null
                     }
                 },
                 label = { Text(stringResource(R.string.contacts_quantity)) },
                 placeholder = { Text(stringResource(R.string.helper_text)) },
+                supportingText = {
+                    if (validationError != null) {
+                        Text(
+                            text = validationError!!,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = uiState is UiState.Idle,
                 singleLine = true,
-                isError = contactCount.isNotEmpty() && (contactCount.toIntOrNull() ?: 0) > 10000
+                isError = validationError != null
             )
             
             // Generate button
             Button(
                 onClick = {
-                    val count = contactCount.toIntOrNull()
-                    if (count != null) {
-                        viewModel.startGenerating(count)
+                    if (contactCount.isEmpty()) {
+                        validationError = stringResource(R.string.error_field_empty)
+                    } else {
+                        val count = contactCount.toIntOrNull()
+                        if (count != null && count > 0 && count <= 10000) {
+                            validationError = null
+                            viewModel.startGenerating(count)
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = contactCount.isNotBlank() && uiState is UiState.Idle
+                enabled = uiState is UiState.Idle
             ) {
                 Text(stringResource(R.string.generate_btn_text))
             }

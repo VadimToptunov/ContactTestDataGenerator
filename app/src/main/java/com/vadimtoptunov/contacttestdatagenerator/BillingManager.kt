@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * Manager for Google Play Billing
@@ -69,18 +72,29 @@ class BillingManager(
     /**
      * Query existing purchases to check premium status
      */
+    private suspend fun queryPurchasesAsync(): List<Purchase> = suspendCancellableCoroutine { continuation ->
+        billingClient?.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder()
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build()
+        ) { billingResult, purchases ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                continuation.resume(purchases)
+            } else {
+                continuation.resumeWithException(
+                    Exception("Query purchases failed: ${billingResult.debugMessage}")
+                )
+            }
+        } ?: continuation.resumeWithException(Exception("BillingClient is null"))
+    }
+    
     fun queryPurchases() {
         scope.launch {
-            withContext(Dispatchers.IO) {
-                billingClient?.queryPurchasesAsync(
-                    QueryPurchasesParams.newBuilder()
-                        .setProductType(BillingClient.ProductType.INAPP)
-                        .build()
-                ) { billingResult, purchases ->
-                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                        handlePurchases(purchases)
-                    }
-                }
+            try {
+                val purchases = queryPurchasesAsync()
+                handlePurchases(purchases)
+            } catch (e: Exception) {
+                // Log error or handle it
             }
         }
     }
@@ -101,20 +115,57 @@ class BillingManager(
         }
     }
     
-    private fun acknowledgePurchase(purchase: Purchase) {
+    private suspend fun acknowledgePurchaseAsync(purchase: Purchase): Boolean = suspendCancellableCoroutine { continuation ->
         val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
             .setPurchaseToken(purchase.purchaseToken)
             .build()
         
+        billingClient?.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                continuation.resume(true)
+            } else {
+                continuation.resume(false)
+            }
+        } ?: continuation.resume(false)
+    }
+    
+    private fun acknowledgePurchase(purchase: Purchase) {
         scope.launch {
-            withContext(Dispatchers.IO) {
-                billingClient?.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
-                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                        queryPurchases()
-                    }
+            try {
+                val success = acknowledgePurchaseAsync(purchase)
+                if (success) {
+                    queryPurchases()
                 }
+            } catch (e: Exception) {
+                // Log error or handle it
             }
         }
+    }
+    
+    /**
+     * Query product details and return them
+     */
+    private suspend fun queryProductDetailsAsync(productId: String): ProductDetails? = suspendCancellableCoroutine { continuation ->
+        val productList = listOf(
+            QueryProductDetailsParams.Product.newBuilder()
+                .setProductId(productId)
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build()
+        )
+        
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(productList)
+            .build()
+        
+        billingClient?.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &&
+                productDetailsList.isNotEmpty()
+            ) {
+                continuation.resume(productDetailsList[0])
+            } else {
+                continuation.resume(null)
+            }
+        } ?: continuation.resume(null)
     }
     
     /**
@@ -124,39 +175,29 @@ class BillingManager(
         scope.launch {
             _purchaseState.value = PurchaseState.Loading
             
-            val productList = listOf(
-                QueryProductDetailsParams.Product.newBuilder()
-                    .setProductId(PREMIUM_PRODUCT_ID)
-                    .setProductType(BillingClient.ProductType.INAPP)
-                    .build()
-            )
-            
-            val params = QueryProductDetailsParams.newBuilder()
-                .setProductList(productList)
-                .build()
-            
-            withContext(Dispatchers.IO) {
-                billingClient?.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
-                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &&
-                        productDetailsList.isNotEmpty()
-                    ) {
-                        val productDetails = productDetailsList[0]
-                        
-                        val productDetailsParamsList = listOf(
-                            BillingFlowParams.ProductDetailsParams.newBuilder()
-                                .setProductDetails(productDetails)
-                                .build()
-                        )
-                        
-                        val billingFlowParams = BillingFlowParams.newBuilder()
-                            .setProductDetailsParamsList(productDetailsParamsList)
+            try {
+                val productDetails = queryProductDetailsAsync(PREMIUM_PRODUCT_ID)
+                
+                if (productDetails != null) {
+                    val productDetailsParamsList = listOf(
+                        BillingFlowParams.ProductDetailsParams.newBuilder()
+                            .setProductDetails(productDetails)
                             .build()
-                        
+                    )
+                    
+                    val billingFlowParams = BillingFlowParams.newBuilder()
+                        .setProductDetailsParamsList(productDetailsParamsList)
+                        .build()
+                    
+                    // Launch billing flow on Main thread
+                    withContext(Dispatchers.Main) {
                         billingClient?.launchBillingFlow(activity, billingFlowParams)
-                    } else {
-                        _purchaseState.value = PurchaseState.Error("Product not found")
                     }
+                } else {
+                    _purchaseState.value = PurchaseState.Error("Product not found")
                 }
+            } catch (e: Exception) {
+                _purchaseState.value = PurchaseState.Error("Failed to load product: ${e.message}")
             }
         }
     }

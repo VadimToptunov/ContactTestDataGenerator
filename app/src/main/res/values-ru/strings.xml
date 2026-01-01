@@ -52,6 +52,59 @@
     <string name="free_limit">Бесплатно: до 1,000 контактов</string>
     <string name="pro_limit">Pro: до 10,000 контактов</string>
     
+    <!-- Field Settings -->
+    <string name="settings_title">Настройки полей</string>
+    <string name="settings_description">Выберите поля для генерации</string>
+    <string name="settings_field_name">Полное имя</string>
+    <string name="settings_field_phone">Номер телефона</string>
+    <string name="settings_field_email">Email адрес</string>
+    <string name="settings_field_company">Компания</string>
+    <string name="settings_field_job_title">Должность</string>
+    <string name="settings_reset">Сбросить настройки</string>
+    <string name="settings_at_least_one">Выберите хотя бы одно поле</string>
+    
+    <!-- Templates -->
+    <string name="templates_title">Шаблоны</string>
+    <string name="templates_empty">Нет сохранённых шаблонов</string>
+    <string name="templates_empty_description">Сохраните часто используемые настройки</string>
+    <string name="templates_save">Сохранить как шаблон</string>
+    <string name="templates_save_dialog_title">Сохранить шаблон</string>
+    <string name="templates_save_dialog_hint">Название шаблона</string>
+    <string name="templates_save_dialog_description">Введите название для шаблона</string>
+    <string name="templates_load">Загрузить</string>
+    <string name="templates_delete">Удалить</string>
+    <string name="templates_export">Экспортировать</string>
+    <string name="templates_export_all">Экспортировать все</string>
+    <string name="templates_import">Импортировать шаблон</string>
+    <string name="templates_imported">Шаблон импортирован!</string>
+    <string name="templates_import_error">Ошибка импорта шаблона</string>
+    <string name="templates_exported">Шаблон экспортирован!</string>
+    <string name="templates_export_error">Ошибка экспорта шаблона</string>
+    <string name="templates_name_required">Требуется название шаблона</string>
+    <string name="templates_confirm_delete">Удалить этот шаблон?</string>
+    
+    <!-- Batch Processing -->
+    <string name="batch_title">Пакетная обработка</string>
+    <string name="batch_empty">Нет задач</string>
+    <string name="batch_add_job">Добавить задачу</string>
+    <string name="batch_start">Начать обработку</string>
+    <string name="batch_cancel">Отменить</string>
+    <string name="batch_clear">Очистить</string>
+    <string name="batch_processing">Обработка пакета…</string>
+    <string name="batch_job_name">Название задачи</string>
+    <string name="batch_job_count">Количество контактов</string>
+    <string name="batch_completed">Пакет завершён!</string>
+    <string name="batch_success_count">Успешно: %d</string>
+    <string name="batch_failed_count">Ошибок: %d</string>
+    <string name="batch_job_pending">Ожидание</string>
+    <string name="batch_job_running">Выполняется</string>
+    <string name="batch_job_completed">Завершено</string>
+    <string name="batch_job_failed">Ошибка</string>
+    <string name="batch_job_cancelled">Отменено</string>
+    <string name="batch_from_template">Из шаблона</string>
+    <string name="batch_overall_progress">Общий прогресс: %d%%</string>
+    <string name="batch_job_progress">Задача %1$d/%2$d</string>
+    
     <plurals name="contacts_generated">
         <item quantity="one">%d контакт успешно создан!</item>
         <item quantity="few">%d контакта успешно создано!</item>

@@ -17,19 +17,21 @@ class VcfGenerator(private val context: Context) {
     /**
      * Generates a VCF file with specified number of contacts
      * @param count Number of contacts to generate
+     * @param settings Field settings for customization
      * @param onProgress Callback for progress updates
-     * @return Pair of Uri and File size in bytes
+     * @return Generated File
      */
     suspend fun generateVcfFile(
         count: Int,
+        settings: ContactFieldSettings,
         onProgress: (current: Int, total: Int) -> Unit
-    ): Pair<Uri, Long> = withContext(Dispatchers.IO) {
+    ): File = withContext(Dispatchers.IO) {
         val fileName = "contacts_${System.currentTimeMillis()}.vcf"
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
         
         FileWriter(file).use { writer ->
             repeat(count) { index ->
-                val contact = generateContact()
+                val contact = generateContact(settings)
                 writer.write(contact)
                 writer.write("\n")
                 
@@ -39,42 +41,51 @@ class VcfGenerator(private val context: Context) {
             }
         }
         
-        val uri = FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            file
-        )
-        
-        Pair(uri, file.length())
+        file
     }
 
     /**
      * Generates a single contact in VCF format
      */
-    private fun generateContact(): String {
-        val name = FakeDataGenerator.generateFullName()
-        val phone = FakeDataGenerator.generatePhoneNumber()
-        val email = FakeDataGenerator.generateEmail(name)
-        val company = FakeDataGenerator.generateCompany()
-        val jobTitle = FakeDataGenerator.generateJobTitle()
+    private fun generateContact(settings: ContactFieldSettings): String {
+        val name = if (settings.includeName) FakeDataGenerator.generateFullName() else "Contact"
+        val phone = if (settings.includePhone) FakeDataGenerator.generatePhoneNumber() else null
+        val email = if (settings.includeEmail) FakeDataGenerator.generateEmail(name) else null
+        val company = if (settings.includeCompany) FakeDataGenerator.generateCompany() else null
+        val jobTitle = if (settings.includeJobTitle) FakeDataGenerator.generateJobTitle() else null
         
         return buildString {
             appendLine("BEGIN:VCARD")
             appendLine("VERSION:3.0")
-            appendLine("FN:$name")
             
-            // Split name into first and last name
-            val nameParts = name.split(" ")
-            if (nameParts.size >= 2) {
-                appendLine("N:${nameParts.last()};${nameParts.first()};;;")
-            } else {
-                appendLine("N:$name;;;;")
+            if (settings.includeName) {
+                appendLine("FN:$name")
+                
+                // Split name into first and last name
+                val nameParts = name.split(" ")
+                if (nameParts.size >= 2) {
+                    appendLine("N:${nameParts.last()};${nameParts.first()};;;")
+                } else {
+                    appendLine("N:$name;;;;")
+                }
             }
             
-            appendLine("TEL;TYPE=CELL:$phone")
-            appendLine("EMAIL;TYPE=INTERNET:$email")
-            appendLine("ORG:$company")
-            appendLine("TITLE:$jobTitle")
+            if (phone != null) {
+                appendLine("TEL;TYPE=CELL:$phone")
+            }
+            
+            if (email != null) {
+                appendLine("EMAIL;TYPE=INTERNET:$email")
+            }
+            
+            if (company != null) {
+                appendLine("ORG:$company")
+            }
+            
+            if (jobTitle != null) {
+                appendLine("TITLE:$jobTitle")
+            }
+            
             appendLine("END:VCARD")
         }
     }

@@ -52,6 +52,59 @@
     <string name="free_limit">Free: up to 1,000 contacts</string>
     <string name="pro_limit">Pro: up to 10,000 contacts</string>
     
+    <!-- Field Settings -->
+    <string name="settings_title">Field Settings</string>
+    <string name="settings_description">Customize contact fields</string>
+    <string name="settings_field_name">Full Name</string>
+    <string name="settings_field_phone">Phone Number</string>
+    <string name="settings_field_email">Email Address</string>
+    <string name="settings_field_company">Company</string>
+    <string name="settings_field_job_title">Job Title</string>
+    <string name="settings_reset">Reset to defaults</string>
+    <string name="settings_at_least_one">At least one field must be selected</string>
+    
+    <!-- Templates -->
+    <string name="templates_title">Templates</string>
+    <string name="templates_empty">No templates saved</string>
+    <string name="templates_empty_description">Save your favorite settings as templates</string>
+    <string name="templates_save">Save as Template</string>
+    <string name="templates_save_dialog_title">Save Template</string>
+    <string name="templates_save_dialog_hint">Template name</string>
+    <string name="templates_save_dialog_description">Give this template a name</string>
+    <string name="templates_load">Load</string>
+    <string name="templates_delete">Delete</string>
+    <string name="templates_export">Export</string>
+    <string name="templates_export_all">Export All</string>
+    <string name="templates_import">Import Template</string>
+    <string name="templates_imported">Template imported!</string>
+    <string name="templates_import_error">Failed to import template</string>
+    <string name="templates_exported">Template exported!</string>
+    <string name="templates_export_error">Failed to export template</string>
+    <string name="templates_name_required">Template name is required</string>
+    <string name="templates_confirm_delete">Delete this template?</string>
+    
+    <!-- Batch Processing -->
+    <string name="batch_title">Batch Processing</string>
+    <string name="batch_empty">No batch jobs</string>
+    <string name="batch_add_job">Add Job</string>
+    <string name="batch_start">Start Batch</string>
+    <string name="batch_cancel">Cancel Batch</string>
+    <string name="batch_clear">Clear</string>
+    <string name="batch_processing">Processing batch…</string>
+    <string name="batch_job_name">Job name</string>
+    <string name="batch_job_count">Contact count</string>
+    <string name="batch_completed">Batch completed!</string>
+    <string name="batch_success_count">Success: %d</string>
+    <string name="batch_failed_count">Failed: %d</string>
+    <string name="batch_job_pending">Pending</string>
+    <string name="batch_job_running">Running</string>
+    <string name="batch_job_completed">Completed</string>
+    <string name="batch_job_failed">Failed</string>
+    <string name="batch_job_cancelled">Cancelled</string>
+    <string name="batch_from_template">Create from Template</string>
+    <string name="batch_overall_progress">Overall: %d%%</string>
+    <string name="batch_job_progress">Job %1$d/%2$d</string>
+    
     <plurals name="contacts_generated">
         <item quantity="one">%d contact generated successfully!</item>
         <item quantity="other">%d contacts generated successfully!</item>

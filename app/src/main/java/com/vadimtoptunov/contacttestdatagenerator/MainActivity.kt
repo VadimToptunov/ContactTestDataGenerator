@@ -15,20 +15,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.FileUpload
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -85,6 +74,13 @@ fun MainScreen(viewModel: MainViewModel) {
     
     val context = LocalContext.current
     val activity = context as? ComponentActivity
+    
+    // Pre-load error strings to avoid @Composable calls in callbacks
+    val errorFieldEmpty = stringResource(R.string.error_field_empty)
+    val errorFieldInvalid = stringResource(R.string.error_field_invalid)
+    val errorFieldZero = stringResource(R.string.error_field_zero)
+    val errorFieldTooLarge = stringResource(R.string.error_field_too_large)
+    val premiumLimitReached = stringResource(R.string.premium_limit_reached)
     
     // File picker for template import
     val importLauncher = rememberLauncherForActivityResult(
@@ -185,12 +181,12 @@ fun MainScreen(viewModel: MainViewModel) {
                     // Update validation error
                     validationError = when {
                         contactCount.isEmpty() -> null
-                        contactCount.toIntOrNull() == null -> stringResource(R.string.error_field_invalid)
-                        contactCount.toInt() == 0 -> stringResource(R.string.error_field_zero)
+                        contactCount.toIntOrNull() == null -> errorFieldInvalid
+                        contactCount.toInt() == 0 -> errorFieldZero
                         contactCount.toInt() > maxContacts -> if (isPremium) {
-                            stringResource(R.string.error_field_too_large)
+                            errorFieldTooLarge
                         } else {
-                            stringResource(R.string.premium_limit_reached)
+                            premiumLimitReached
                         }
                         else -> null
                     }
@@ -216,7 +212,7 @@ fun MainScreen(viewModel: MainViewModel) {
             Button(
                 onClick = {
                     if (contactCount.isEmpty()) {
-                        validationError = stringResource(R.string.error_field_empty)
+                        validationError = errorFieldEmpty
                     } else {
                         val count = contactCount.toIntOrNull()
                         if (count != null && count > 0 && count <= maxContacts) {
@@ -237,7 +233,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 modifier = Modifier.fillMaxWidth(),
                 enabled = uiState is UiState.Idle && contactCount.isNotEmpty() && validationError == null
             ) {
-                Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.AddCircle, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(stringResource(R.string.templates_save))
             }
@@ -630,7 +626,7 @@ fun FileHistorySection(
                 
                 IconButton(onClick = onExpandToggle) {
                     Icon(
-                        if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                         contentDescription = if (expanded) "Collapse" else "Expand"
                     )
                 }
@@ -775,6 +771,63 @@ fun FieldSettingsDialog(
 }
 
 @Composable
+fun PremiumDialog(
+    onDismiss: () -> Unit,
+    onPurchase: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                Icons.Default.Star,
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.tertiary
+            )
+        },
+        title = {
+            Text(
+                text = stringResource(R.string.premium_title),
+                style = MaterialTheme.typography.headlineSmall
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = stringResource(R.string.premium_description),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = stringResource(R.string.premium_feature_1),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = stringResource(R.string.premium_feature_2),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = stringResource(R.string.premium_feature_3),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = onPurchase) {
+                Text(stringResource(R.string.premium_button))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
 fun SaveTemplateDialog(
     defaultCount: Int,
     onDismiss: () -> Unit,
@@ -785,7 +838,7 @@ fun SaveTemplateDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(32.dp)) },
+        icon = { Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(32.dp)) },
         title = { Text(stringResource(R.string.templates_save_dialog_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -845,16 +898,16 @@ fun TemplatesSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Icon(Icons.Default.Save, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
+                    Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
                     Text(stringResource(R.string.templates_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 }
                 Row {
                     IconButton(onClick = onImport) {
-                        Icon(Icons.Default.FileUpload, contentDescription = stringResource(R.string.templates_import))
+                        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.templates_import))
                     }
                     IconButton(onClick = onExpandToggle) {
                         Icon(
-                            if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                            if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                             contentDescription = if (expanded) "Collapse" else "Expand"
                         )
                     }
@@ -901,7 +954,7 @@ fun TemplateItem(
                 Icon(Icons.Default.PlayArrow, contentDescription = stringResource(R.string.templates_load), tint = MaterialTheme.colorScheme.primary)
             }
             IconButton(onClick = { onExport(template) }) {
-                Icon(Icons.Default.Download, contentDescription = stringResource(R.string.templates_export), tint = MaterialTheme.colorScheme.tertiary)
+                Icon(Icons.Default.Send, contentDescription = stringResource(R.string.templates_export), tint = MaterialTheme.colorScheme.tertiary)
             }
             IconButton(onClick = { onDelete(template) }) {
                 Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.templates_delete), tint = MaterialTheme.colorScheme.error)
@@ -995,7 +1048,7 @@ fun BatchProcessingSection(
                 }
                 IconButton(onClick = onExpandToggle) {
                     Icon(
-                        if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                         contentDescription = if (expanded) "Collapse" else "Expand"
                     )
                 }
@@ -1078,7 +1131,7 @@ fun BatchJobItem(job: BatchJob, onRemove: (BatchJob) -> Unit, canRemove: Boolean
             } else if (job.status == BatchJobStatus.COMPLETED) {
                 Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(16.dp))
             } else if (job.status == BatchJobStatus.FAILED) {
-                Icon(Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
+                Icon(Icons.Default.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
             }
         }
         if (canRemove) {

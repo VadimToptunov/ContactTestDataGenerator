@@ -19,7 +19,7 @@
     <string name="error_max_exceeded">الحد الأقصى %d جهة اتصال في المرة الواحدة</string>
     <string name="error_must_be_positive">يجب أن يكون العدد أكبر من 0</string>
     <string name="error_generating">خطأ في إنشاء جهات الاتصال</string>
-    <string name="progress_generating">جارٍ إنشاء جهات الاتصال...</string>
+    <string name="progress_generating">جارٍ إنشاء جهات الاتصال…</string>
     <string name="progress_creating">%1$d / %2$d</string>
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ نجح!</string>

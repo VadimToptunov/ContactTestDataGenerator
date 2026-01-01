@@ -19,7 +19,7 @@
     <string name="error_max_exceeded">حداکثر %d مخاطب در هر بار</string>
     <string name="error_must_be_positive">تعداد باید بیشتر از 0 باشد</string>
     <string name="error_generating">خطا در ایجاد مخاطبین</string>
-    <string name="progress_generating">در حال ایجاد مخاطبین...</string>
+    <string name="progress_generating">در حال ایجاد مخاطبین…</string>
     <string name="progress_creating">%1$d / %2$d</string>
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ موفق!</string>

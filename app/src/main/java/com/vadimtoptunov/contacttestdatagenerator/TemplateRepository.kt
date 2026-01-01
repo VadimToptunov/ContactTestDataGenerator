@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import androidx.core.content.edit
 
 /**
  * Repository for managing contact templates
@@ -40,7 +41,7 @@ class TemplateRepository(private val context: Context) {
     
     private fun saveTemplates() {
         val templatesJson = json.encodeToString(_templates.value)
-        prefs.edit().putString("templates_list", templatesJson).apply()
+        prefs.edit { putString("templates_list", templatesJson) }
     }
     
     fun addTemplate(template: ContactTemplate) {

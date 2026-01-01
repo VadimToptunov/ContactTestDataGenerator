@@ -19,7 +19,7 @@
     <string name="error_max_exceeded">מקסימום %d אנשי קשר בכל פעם</string>
     <string name="error_must_be_positive">המספר חייב להיות גדול מ-0</string>
     <string name="error_generating">שגיאה ביצירת אנשי קשר</string>
-    <string name="progress_generating">יוצר אנשי קשר...</string>
+    <string name="progress_generating">יוצר אנשי קשר…</string>
     <string name="progress_creating">%1$d / %2$d</string>
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ הצלחה!</string>

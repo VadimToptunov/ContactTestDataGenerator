@@ -19,7 +19,7 @@
     <string name="error_max_exceeded">Максимум %d контактов за раз</string>
     <string name="error_must_be_positive">Количество должно быть больше 0</string>
     <string name="error_generating">Ошибка генерации контактов</string>
-    <string name="progress_generating">Генерация контактов...</string>
+    <string name="progress_generating">Генерация контактов…</string>
     <string name="progress_creating">%1$d / %2$d</string>
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ Успешно!</string>

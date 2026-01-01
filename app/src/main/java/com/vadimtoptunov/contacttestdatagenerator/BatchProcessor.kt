@@ -78,9 +78,7 @@ class BatchProcessor(
                         if (i == index) j.copy(progress = progress) else j
                     }
                     
-                    withContext(Dispatchers.Main) {
-                        onJobProgress(index, current, total)
-                    }
+                    onJobProgress(index, current, total)
                 }
                 
                 // Update job status to COMPLETED

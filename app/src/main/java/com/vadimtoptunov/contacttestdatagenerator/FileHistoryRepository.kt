@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import androidx.core.net.toUri
 
 /**
  * Repository for managing VCF file history
@@ -37,7 +38,7 @@ class FileHistoryRepository(private val context: Context) {
             (0 until jsonArray.length()).mapNotNull { i ->
                 try {
                     val obj = jsonArray.getJSONObject(i)
-                    val uri = Uri.parse(obj.getString("uri"))
+                    val uri = obj.getString("uri").toUri()
                     val absolutePath = obj.getString("absolutePath")
                     
                     // Check if file still exists using absolute path

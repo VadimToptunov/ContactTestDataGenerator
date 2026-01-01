@@ -19,7 +19,7 @@
     <string name="error_max_exceeded">Máximo %d contactos a la vez</string>
     <string name="error_must_be_positive">La cantidad debe ser mayor que 0</string>
     <string name="error_generating">Error al generar contactos</string>
-    <string name="progress_generating">Generando contactos...</string>
+    <string name="progress_generating">Generando contactos…</string>
     <string name="progress_creating">%1$d / %2$d</string>
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ ¡Éxito!</string>

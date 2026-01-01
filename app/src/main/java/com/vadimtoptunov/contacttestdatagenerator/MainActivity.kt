@@ -219,7 +219,7 @@ fun MainScreen(viewModel: MainViewModel) {
                         validationError = stringResource(R.string.error_field_empty)
                     } else {
                         val count = contactCount.toIntOrNull()
-                        if (count != null && count > 0 && count <= 10000) {
+                        if (count != null && count > 0 && count <= maxContacts) {
                             validationError = null
                             viewModel.startGenerating(count)
                         }

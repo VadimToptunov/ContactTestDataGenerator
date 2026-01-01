@@ -94,7 +94,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     uri = uri,
                     fileName = file.name,
                     contactCount = count,
-                    fileSizeBytes = file.length()
+                    fileSizeBytes = file.length(),
+                    absolutePath = file.absolutePath
                 )
                 fileHistoryRepository.addFile(fileInfo)
                 loadHistory()
@@ -253,7 +254,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         uri = uri,
                         fileName = file.name,
                         contactCount = jobs[jobIndex].contactCount,
-                        fileSizeBytes = file.length()
+                        fileSizeBytes = file.length(),
+                        absolutePath = file.absolutePath
                     )
                     viewModelScope.launch {
                         fileHistoryRepository.addFile(fileInfo)

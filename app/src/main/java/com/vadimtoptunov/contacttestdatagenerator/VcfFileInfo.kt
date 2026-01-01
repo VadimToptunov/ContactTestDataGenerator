@@ -12,7 +12,8 @@ data class VcfFileInfo(
     val fileName: String,
     val contactCount: Int,
     val fileSizeBytes: Long,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val absolutePath: String // Added to store actual file path
 ) {
     val fileSizeFormatted: String
         get() {

@@ -38,9 +38,10 @@ class FileHistoryRepository(private val context: Context) {
                 try {
                     val obj = jsonArray.getJSONObject(i)
                     val uri = Uri.parse(obj.getString("uri"))
+                    val absolutePath = obj.getString("absolutePath")
                     
-                    // Check if file still exists
-                    val file = File(uri.path ?: return@mapNotNull null)
+                    // Check if file still exists using absolute path
+                    val file = File(absolutePath)
                     if (!file.exists()) return@mapNotNull null
                     
                     VcfFileInfo(
@@ -48,7 +49,8 @@ class FileHistoryRepository(private val context: Context) {
                         fileName = obj.getString("fileName"),
                         contactCount = obj.getInt("contactCount"),
                         fileSizeBytes = obj.getLong("fileSizeBytes"),
-                        timestamp = obj.getLong("timestamp")
+                        timestamp = obj.getLong("timestamp"),
+                        absolutePath = absolutePath
                     )
                 } catch (e: Exception) {
                     null
@@ -60,9 +62,9 @@ class FileHistoryRepository(private val context: Context) {
     }
     
     suspend fun deleteFile(fileInfo: VcfFileInfo) = withContext(Dispatchers.IO) {
-        // Delete from storage
+        // Delete from storage using absolute path
         try {
-            val file = File(fileInfo.uri.path ?: return@withContext)
+            val file = File(fileInfo.absolutePath)
             file.delete()
         } catch (e: Exception) {
             // Ignore
@@ -76,10 +78,10 @@ class FileHistoryRepository(private val context: Context) {
     suspend fun clearHistory() = withContext(Dispatchers.IO) {
         val history = getHistory()
         
-        // Delete all files
+        // Delete all files using absolute paths
         history.forEach { fileInfo ->
             try {
-                val file = File(fileInfo.uri.path ?: return@forEach)
+                val file = File(fileInfo.absolutePath)
                 file.delete()
             } catch (e: Exception) {
                 // Ignore
@@ -99,6 +101,7 @@ class FileHistoryRepository(private val context: Context) {
                 put("contactCount", fileInfo.contactCount)
                 put("fileSizeBytes", fileInfo.fileSizeBytes)
                 put("timestamp", fileInfo.timestamp)
+                put("absolutePath", fileInfo.absolutePath)
             }
             jsonArray.put(obj)
         }

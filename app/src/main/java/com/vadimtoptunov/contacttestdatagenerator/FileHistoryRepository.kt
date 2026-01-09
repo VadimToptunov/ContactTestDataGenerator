@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.content.edit
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
@@ -17,25 +19,34 @@ class FileHistoryRepository(private val context: Context) {
     
     private val prefs = context.getSharedPreferences("file_history", Context.MODE_PRIVATE)
     private val KEY_HISTORY = "history_json"
+    private val mutex = Mutex()
     
     suspend fun addFile(fileInfo: VcfFileInfo) = withContext(Dispatchers.IO) {
-        val history = getHistory().toMutableList()
-        history.add(0, fileInfo) // Add to beginning
-        
-        // Keep only last 20 files
-        if (history.size > 20) {
-            history.subList(20, history.size).clear()
+        mutex.withLock {
+            val history = getHistoryInternal().toMutableList()
+            history.add(0, fileInfo) // Add to beginning
+            
+            // Keep only last 20 files
+            if (history.size > 20) {
+                history.subList(20, history.size).clear()
+            }
+            
+            saveHistory(history)
         }
-        
-        saveHistory(history)
     }
     
     suspend fun getHistory(): List<VcfFileInfo> = withContext(Dispatchers.IO) {
+        mutex.withLock {
+            getHistoryInternal()
+        }
+    }
+    
+    private fun getHistoryInternal(): List<VcfFileInfo> {
         try {
-            val json = prefs.getString(KEY_HISTORY, null) ?: return@withContext emptyList()
+            val json = prefs.getString(KEY_HISTORY, null) ?: return emptyList()
             val jsonArray = JSONArray(json)
             
-            (0 until jsonArray.length()).mapNotNull { i ->
+            return (0 until jsonArray.length()).mapNotNull { i ->
                 try {
                     val obj = jsonArray.getJSONObject(i)
                     val uri = obj.getString("uri").toUri()
@@ -58,39 +69,43 @@ class FileHistoryRepository(private val context: Context) {
                 }
             }
         } catch (e: Exception) {
-            emptyList()
+            return emptyList()
         }
     }
     
     suspend fun deleteFile(fileInfo: VcfFileInfo) = withContext(Dispatchers.IO) {
-        // Delete from storage using absolute path
-        try {
-            val file = File(fileInfo.absolutePath)
-            file.delete()
-        } catch (e: Exception) {
-            // Ignore
-        }
-        
-        // Remove from history
-        val history = getHistory().filter { it.uri != fileInfo.uri }
-        saveHistory(history)
-    }
-    
-    suspend fun clearHistory() = withContext(Dispatchers.IO) {
-        val history = getHistory()
-        
-        // Delete all files using absolute paths
-        history.forEach { fileInfo ->
+        mutex.withLock {
+            // Delete from storage using absolute path
             try {
                 val file = File(fileInfo.absolutePath)
                 file.delete()
             } catch (e: Exception) {
                 // Ignore
             }
+            
+            // Remove from history
+            val history = getHistoryInternal().filter { it.uri != fileInfo.uri }
+            saveHistory(history)
         }
-        
-        // Clear history
-        prefs.edit { remove(KEY_HISTORY) }
+    }
+    
+    suspend fun clearHistory() = withContext(Dispatchers.IO) {
+        mutex.withLock {
+            val history = getHistoryInternal()
+            
+            // Delete all files using absolute paths
+            history.forEach { fileInfo ->
+                try {
+                    val file = File(fileInfo.absolutePath)
+                    file.delete()
+                } catch (e: Exception) {
+                    // Ignore
+                }
+            }
+            
+            // Clear history
+            saveHistory(emptyList())
+        }
     }
     
     private fun saveHistory(history: List<VcfFileInfo>) {

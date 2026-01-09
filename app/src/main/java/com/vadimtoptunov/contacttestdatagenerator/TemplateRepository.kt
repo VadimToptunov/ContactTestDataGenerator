@@ -66,7 +66,9 @@ class TemplateRepository(private val context: Context) {
      */
     suspend fun exportTemplate(template: ContactTemplate): File = withContext(Dispatchers.IO) {
         val fileName = "template_${template.name.replace(" ", "_")}_${System.currentTimeMillis()}.json"
-        val file = File(context.getExternalFilesDir(null), fileName)
+        val externalDir = context.getExternalFilesDir(null)
+            ?: throw IllegalStateException("External storage is unavailable")
+        val file = File(externalDir, fileName)
         
         val templateJson = json.encodeToString(template)
         file.writeText(templateJson)
@@ -79,7 +81,9 @@ class TemplateRepository(private val context: Context) {
      */
     suspend fun exportAllTemplates(): File = withContext(Dispatchers.IO) {
         val fileName = "all_templates_${System.currentTimeMillis()}.json"
-        val file = File(context.getExternalFilesDir(null), fileName)
+        val externalDir = context.getExternalFilesDir(null)
+            ?: throw IllegalStateException("External storage is unavailable")
+        val file = File(externalDir, fileName)
         
         val templatesJson = json.encodeToString(_templates.value)
         file.writeText(templatesJson)

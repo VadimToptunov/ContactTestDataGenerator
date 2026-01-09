@@ -27,7 +27,9 @@ class VcfGenerator(private val context: Context) {
         onProgress: (current: Int, total: Int) -> Unit
     ): File = withContext(Dispatchers.IO) {
         val fileName = "contacts_${System.currentTimeMillis()}.vcf"
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+        val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+            ?: throw IllegalStateException("External storage is unavailable")
+        val file = File(externalDir, fileName)
         
         FileWriter(file).use { writer ->
             repeat(count) { index ->

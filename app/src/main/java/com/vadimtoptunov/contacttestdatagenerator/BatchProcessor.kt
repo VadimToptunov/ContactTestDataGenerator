@@ -4,10 +4,12 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -16,7 +18,8 @@ import java.io.File
  */
 class BatchProcessor(
     private val context: Context,
-    private val vcfGenerator: VcfGenerator
+    private val vcfGenerator: VcfGenerator,
+    private val coroutineScope: CoroutineScope
 ) {
     private val _currentBatch = MutableStateFlow<List<BatchJob>>(emptyList())
     val currentBatch: StateFlow<List<BatchJob>> = _currentBatch.asStateFlow()
@@ -78,7 +81,10 @@ class BatchProcessor(
                         if (i == index) j.copy(progress = progress) else j
                     }
                     
-                    onJobProgress(index, current, total)
+                    // Call onJobProgress on Main dispatcher
+                    coroutineScope.launch(Dispatchers.Main) {
+                        onJobProgress(index, current, total)
+                    }
                 }
                 
                 // Update job status to COMPLETED

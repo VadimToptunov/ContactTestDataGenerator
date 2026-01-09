@@ -27,7 +27,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val billingManager = BillingManager(application, viewModelScope)
     val settingsRepository = SettingsRepository(application)
     val templateRepository = TemplateRepository(application)
-    val batchProcessor = BatchProcessor(application, vcfGenerator)
+    val batchProcessor = BatchProcessor(application, vcfGenerator, viewModelScope)
     
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()

@@ -21,3 +21,5 @@ release/
 captures/
 output.json
 *.hprof
+*.log
+*.salive

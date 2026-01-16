@@ -12,6 +12,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -133,7 +135,9 @@ fun MainScreen(viewModel: MainViewModel) {
                         )
                     }
                     if (!isPremium) {
-                        IconButton(onClick = { showPremiumDialog = true }) {
+                        IconButton(onClick = { 
+                            activity?.let { viewModel.purchasePremium(it) }
+                        }) {
                             Icon(
                                 Icons.Default.Star,
                                 contentDescription = stringResource(R.string.premium_title),
@@ -153,6 +157,7 @@ fun MainScreen(viewModel: MainViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -898,7 +903,7 @@ fun TemplatesSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
+                    Icon(Icons.Default.List, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
                     Text(stringResource(R.string.templates_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 }
                 Row {
@@ -1124,17 +1129,23 @@ fun BatchJobItem(job: BatchJob, onRemove: (BatchJob) -> Unit, canRemove: Boolean
             Text(job.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             Text("${job.contactCount} contacts", style = MaterialTheme.typography.bodySmall)
             if (job.status == BatchJobStatus.RUNNING) {
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(modifier = Modifier.size(12.dp), strokeWidth = 2.dp)
                     Text("${job.progress}%", style = MaterialTheme.typography.bodySmall)
                 }
             } else if (job.status == BatchJobStatus.COMPLETED) {
-                Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(16.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(16.dp))
+                    Text("Completed", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.tertiary)
+                }
             } else if (job.status == BatchJobStatus.FAILED) {
-                Icon(Icons.Default.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
+                    Text("Failed", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                }
             }
         }
-        if (canRemove) {
+        if (canRemove && job.status != BatchJobStatus.RUNNING) {
             IconButton(onClick = { onRemove(job) }) {
                 Icon(Icons.Default.Delete, contentDescription = "Remove", tint = MaterialTheme.colorScheme.error)
             }

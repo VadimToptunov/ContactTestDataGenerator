@@ -194,7 +194,9 @@ fun MainScreen(viewModel: MainViewModel) {
             OutlinedTextField(
                 value = contactCount,
                 onValueChange = { newValue ->
-                    contactCount = newValue.filter { it.isDigit() }
+                    // Limit to 5 digits max (10000)
+                    val filteredValue = newValue.filter { it.isDigit() }.take(5)
+                    contactCount = filteredValue
                     
                     // Update validation error
                     val count = contactCount.toIntOrNull()

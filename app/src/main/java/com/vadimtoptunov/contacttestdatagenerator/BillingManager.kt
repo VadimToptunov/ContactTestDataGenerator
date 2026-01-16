@@ -2,6 +2,7 @@ package com.vadimtoptunov.contacttestdatagenerator
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -35,6 +36,7 @@ class BillingManager(
     private var billingClient: BillingClient? = null
     
     companion object {
+        private const val TAG = "BillingManager"
         const val PREMIUM_PRODUCT_ID = "premium_unlock"
         const val FREE_MAX_CONTACTS = 1000
         const val PREMIUM_MAX_CONTACTS = 10000
@@ -56,13 +58,19 @@ class BillingManager(
     private fun connectToBilling() {
         billingClient?.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
+                Log.d(TAG, "Billing setup finished: ${billingResult.responseCode} - ${billingResult.debugMessage}")
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // Connected successfully
+                    Log.d(TAG, "Billing connected successfully")
                     queryPurchases()
+                } else {
+                    Log.e(TAG, "Billing setup failed: ${billingResult.debugMessage}")
+                    _purchaseState.value = PurchaseState.Error("Billing setup failed: ${billingResult.debugMessage}")
                 }
             }
             
             override fun onBillingServiceDisconnected() {
+                Log.w(TAG, "Billing service disconnected, attempting reconnect")
                 // Try to reconnect
                 connectToBilling()
             }
@@ -91,10 +99,13 @@ class BillingManager(
     fun queryPurchases() {
         scope.launch {
             try {
+                Log.d(TAG, "Querying purchases...")
                 val purchases = queryPurchasesAsync()
+                Log.d(TAG, "Found ${purchases.size} purchases")
                 handlePurchases(purchases)
             } catch (e: Exception) {
-                // Log error or handle it
+                Log.e(TAG, "Failed to query purchases", e)
+                _purchaseState.value = PurchaseState.Error("Failed to query purchases: ${e.message}")
             }
         }
     }
@@ -172,19 +183,23 @@ class BillingManager(
      * Launch purchase flow for premium
      */
     fun launchPurchaseFlow(activity: Activity) {
+        Log.d(TAG, "Launching purchase flow...")
         scope.launch {
             _purchaseState.value = PurchaseState.Loading
             
             try {
                 // Check if billing client is ready
                 if (billingClient?.isReady != true) {
+                    Log.e(TAG, "Billing client not ready")
                     _purchaseState.value = PurchaseState.Error("Billing not ready, please try again")
                     return@launch
                 }
                 
+                Log.d(TAG, "Querying product details for: $PREMIUM_PRODUCT_ID")
                 val productDetails = queryProductDetailsAsync(PREMIUM_PRODUCT_ID)
                 
                 if (productDetails != null) {
+                    Log.d(TAG, "Product found: ${productDetails.name}, price: ${productDetails.oneTimePurchaseOfferDetails?.formattedPrice}")
                     val productDetailsParamsList = listOf(
                         BillingFlowParams.ProductDetailsParams.newBuilder()
                             .setProductDetails(productDetails)
@@ -198,32 +213,39 @@ class BillingManager(
                     // Launch billing flow on Main thread
                     withContext(Dispatchers.Main) {
                         val result = billingClient?.launchBillingFlow(activity, billingFlowParams)
+                        Log.d(TAG, "Launch billing flow result: ${result?.responseCode} - ${result?.debugMessage}")
                         if (result?.responseCode != BillingClient.BillingResponseCode.OK) {
                             _purchaseState.value = PurchaseState.Error("Failed to start purchase: ${result?.debugMessage}")
                         }
                     }
                 } else {
-                    _purchaseState.value = PurchaseState.Error("Product not found")
+                    Log.e(TAG, "Product not found: $PREMIUM_PRODUCT_ID")
+                    _purchaseState.value = PurchaseState.Error("Product not found. Make sure '$PREMIUM_PRODUCT_ID' is configured in Google Play Console")
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Failed to launch purchase flow", e)
                 _purchaseState.value = PurchaseState.Error("Failed to load product: ${e.message}")
             }
         }
     }
     
     override fun onPurchasesUpdated(billingResult: BillingResult, purchases: List<Purchase>?) {
+        Log.d(TAG, "onPurchasesUpdated: ${billingResult.responseCode} - ${billingResult.debugMessage}")
         when (billingResult.responseCode) {
             BillingClient.BillingResponseCode.OK -> {
                 if (purchases != null) {
+                    Log.d(TAG, "Purchase successful, handling ${purchases.size} purchases")
                     handlePurchases(purchases)
                     _purchaseState.value = PurchaseState.Success
                 }
             }
             BillingClient.BillingResponseCode.USER_CANCELED -> {
+                Log.d(TAG, "Purchase cancelled by user")
                 _purchaseState.value = PurchaseState.Cancelled
             }
             else -> {
-                _purchaseState.value = PurchaseState.Error("Purchase failed")
+                Log.e(TAG, "Purchase failed: ${billingResult.debugMessage}")
+                _purchaseState.value = PurchaseState.Error("Purchase failed: ${billingResult.debugMessage}")
             }
         }
     }

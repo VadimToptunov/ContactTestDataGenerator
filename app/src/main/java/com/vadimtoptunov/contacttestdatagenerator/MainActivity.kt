@@ -77,6 +77,19 @@ fun MainScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
     val activity = context as? ComponentActivity
     
+    // Show purchase state toast
+    LaunchedEffect(purchaseState) {
+        when (purchaseState) {
+            is BillingManager.PurchaseState.Error -> {
+                Toast.makeText(context, (purchaseState as BillingManager.PurchaseState.Error).message, Toast.LENGTH_LONG).show()
+            }
+            is BillingManager.PurchaseState.Success -> {
+                Toast.makeText(context, "Premium unlocked! 🎉", Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+        }
+    }
+    
     // Pre-load error strings to avoid @Composable calls in callbacks
     val errorFieldEmpty = stringResource(R.string.error_field_empty)
     val errorFieldInvalid = stringResource(R.string.error_field_invalid)
@@ -184,11 +197,12 @@ fun MainScreen(viewModel: MainViewModel) {
                     contactCount = newValue.filter { it.isDigit() }
                     
                     // Update validation error
+                    val count = contactCount.toIntOrNull()
                     validationError = when {
                         contactCount.isEmpty() -> null
-                        contactCount.toIntOrNull() == null -> errorFieldInvalid
-                        contactCount.toInt() == 0 -> errorFieldZero
-                        contactCount.toInt() > maxContacts -> if (isPremium) {
+                        count == null -> errorFieldTooLarge // Number too large for Int
+                        count == 0 -> errorFieldZero
+                        count > maxContacts -> if (isPremium) {
                             errorFieldTooLarge
                         } else {
                             premiumLimitReached
@@ -315,9 +329,13 @@ fun MainScreen(viewModel: MainViewModel) {
                 expanded = templatesExpanded,
                 onExpandToggle = { templatesExpanded = !templatesExpanded },
                 onLoad = { template ->
-                    viewModel.loadTemplate(template)
-                    contactCount = template.contactCount.toString()
-                    Toast.makeText(context, "Template \"${template.name}\" loaded", Toast.LENGTH_SHORT).show()
+                    try {
+                        viewModel.loadTemplate(template)
+                        contactCount = template.contactCount.toString()
+                        Toast.makeText(context, "Template \"${template.name}\" loaded", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Failed to load template: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
                 },
                 onDelete = { viewModel.deleteTemplate(it.id) },
                 onExport = { template ->

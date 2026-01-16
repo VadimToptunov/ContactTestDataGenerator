@@ -176,6 +176,12 @@ class BillingManager(
             _purchaseState.value = PurchaseState.Loading
             
             try {
+                // Check if billing client is ready
+                if (billingClient?.isReady != true) {
+                    _purchaseState.value = PurchaseState.Error("Billing not ready, please try again")
+                    return@launch
+                }
+                
                 val productDetails = queryProductDetailsAsync(PREMIUM_PRODUCT_ID)
                 
                 if (productDetails != null) {
@@ -191,7 +197,10 @@ class BillingManager(
                     
                     // Launch billing flow on Main thread
                     withContext(Dispatchers.Main) {
-                        billingClient?.launchBillingFlow(activity, billingFlowParams)
+                        val result = billingClient?.launchBillingFlow(activity, billingFlowParams)
+                        if (result?.responseCode != BillingClient.BillingResponseCode.OK) {
+                            _purchaseState.value = PurchaseState.Error("Failed to start purchase: ${result?.debugMessage}")
+                        }
                     }
                 } else {
                     _purchaseState.value = PurchaseState.Error("Product not found")

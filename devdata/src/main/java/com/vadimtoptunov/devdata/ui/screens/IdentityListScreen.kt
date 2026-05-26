@@ -15,26 +15,32 @@ import com.vadimtoptunov.devdata.db.IdentityEntity
 import com.vadimtoptunov.devdata.ui.IdentityViewModel
 
 /**
- * Lists all persisted standalone identities (not part of a suite).
- * Each row shows key metadata and a button to load the identity into the HCE chip.
+ * Lists all persisted standalone identities.
+ * Each row shows key metadata and buttons to view detail, start an NFC session, or delete.
  */
 @Composable
-fun IdentityListScreen(vm: IdentityViewModel = viewModel()) {
+fun IdentityListScreen(
+    onOpenDetail: (id: String) -> Unit = {},
+    onOpenNfc:    (id: String) -> Unit = {},
+    vm:           IdentityViewModel = viewModel()
+) {
     val identities   by vm.identities.collectAsState()
     val activeChipId by vm.activeChipIdentityId.collectAsState()
 
     if (identities.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No identities yet.\nUse Generate to create one.",
+            Text(
+                "No identities yet.\nUse Generate to create one.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         return
     }
 
     LazyColumn(
-        modifier       = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        modifier            = Modifier.fillMaxSize(),
+        contentPadding      = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(identities, key = { it.id }) { entity ->
@@ -43,26 +49,32 @@ fun IdentityListScreen(vm: IdentityViewModel = viewModel()) {
                 isActive     = entity.id == activeChipId,
                 onActivate   = { vm.activateForHce(entity.id) },
                 onDeactivate = { vm.deactivateHce() },
-                onDelete     = { vm.deleteIdentity(entity.id) }
+                onDelete     = { vm.deleteIdentity(entity.id) },
+                onDetail     = { onOpenDetail(entity.id) },
+                onNfc        = { onOpenNfc(entity.id) }
             )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IdentityCard(
     entity:       IdentityEntity,
     isActive:     Boolean,
     onActivate:   () -> Unit,
     onDeactivate: () -> Unit,
-    onDelete:     () -> Unit
+    onDelete:     () -> Unit,
+    onDetail:     () -> Unit,
+    onNfc:        () -> Unit
 ) {
     val containerColor = if (isActive) MaterialTheme.colorScheme.primaryContainer
                          else MaterialTheme.colorScheme.surfaceVariant
 
     Card(
         colors   = CardDefaults.cardColors(containerColor = containerColor),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        onClick  = onDetail
     ) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -99,6 +111,10 @@ private fun IdentityCard(
                             modifier = Modifier.weight(1f)
                         ) { Text("Load to NFC") }
                     }
+                    OutlinedButton(
+                        onClick  = onNfc,
+                        modifier = Modifier.weight(1f)
+                    ) { Text("Session") }
                 } else {
                     Text(
                         "No NFC chip",

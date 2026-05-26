@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "ContactTestDataGenerator"
 include(":app")
+include(":generators")
+include(":devdata")

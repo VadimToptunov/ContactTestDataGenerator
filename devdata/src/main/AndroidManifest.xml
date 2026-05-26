@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NFC permission — used for HCE chip emulation -->
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <uses-feature android:name="android.hardware.nfc.hce" android:required="false" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DevData">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            HCE service — emulates an ICAO 9303 eMRTD NFC chip.
+
+            AID: A0000002471001 (ICAO eMRTD / ePassport)
+
+            IMPORTANT: This service is for authorised testing only.
+            Passive Authentication will always fail (PA_FAIL) because
+            we do not hold a government CSCA private key.
+            DG1 (MRZ) and DG2 stub are readable by any NFC reader.
+
+            android:exported="true" is REQUIRED by the HCE framework.
+        -->
+        <service
+            android:name=".hce.HcePassportService"
+            android:exported="true"
+            android:permission="android.permission.BIND_NFC_SERVICE">
+            <intent-filter>
+                <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.nfc.cardemulation.host_apdu_service"
+                android:resource="@xml/hce_apdu_service" />
+        </service>
+
+    </application>
+
+</manifest>

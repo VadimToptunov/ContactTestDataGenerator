@@ -1,9 +1,9 @@
 package com.vadimtoptunov.contacttestdatagenerator
 
-import com.vadimtoptunov.contacttestdatagenerator.generators.identity.TaxIdAlgorithms
-import com.vadimtoptunov.contacttestdatagenerator.generators.identity.TaxIdGenerator
-import com.vadimtoptunov.contacttestdatagenerator.generators.identity.TaxIdIntent
-import com.vadimtoptunov.contacttestdatagenerator.generators.identity.TaxIdValidator
+import com.vadimtoptunov.generators.identity.TaxIdAlgorithms
+import com.vadimtoptunov.generators.identity.TaxIdGenerator
+import com.vadimtoptunov.generators.identity.TaxIdIntent
+import com.vadimtoptunov.generators.identity.TaxIdValidator
 import org.junit.Assert.*
 import org.junit.Test
 

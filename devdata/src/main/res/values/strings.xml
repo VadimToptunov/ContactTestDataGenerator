@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DevData — KYC Test Toolkit</string>
+    <string name="hce_service_description">Synthetic eMRTD chip emulator (TEST ONLY)</string>
+    <string name="hce_aid_group_description">ICAO ePassport AID A0000002471001</string>
+</resources>

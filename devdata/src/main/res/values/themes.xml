@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    XML theme required by AndroidManifest.xml android:theme="@style/Theme.DevData".
+    The actual colour scheme is applied in Compose via DevDataTheme / MaterialTheme,
+    so this style only needs to satisfy the Activity window setup before Compose
+    takes over (edge-to-edge, status bar colour, etc.).
+-->
+<resources>
+
+    <style name="Theme.DevData" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Window background shown during cold start before Compose renders -->
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+
+        <!-- Edge-to-edge: let Compose handle insets -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+</resources>

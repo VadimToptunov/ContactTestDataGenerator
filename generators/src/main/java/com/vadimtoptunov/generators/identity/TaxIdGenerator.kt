@@ -48,6 +48,30 @@ class TaxIdGenerator(
         countrySpec.generateBlacklisted()
     )
 
+    // ─── Convenience delegates to the country spec ───────────────────────────
+    // Let callers request a single variant without reaching into `countrySpec`.
+
+    /** One VALID record (same as [generate]). */
+    fun generateValid(): TaxIdRecord = countrySpec.generateValid()
+
+    /** INVALID — correct format but wrong check digit. */
+    fun generateInvalidChecksum(): TaxIdRecord = countrySpec.generateInvalidChecksum()
+
+    /** INVALID — fewer characters than required. */
+    fun generateTooShort(): TaxIdRecord = countrySpec.generateTooShort()
+
+    /** INVALID — more characters than allowed. */
+    fun generateTooLong(): TaxIdRecord = countrySpec.generateTooLong()
+
+    /** INVALID — all-same-digit sequence (000…, 111…). */
+    fun generateAllSameDigit(): TaxIdRecord = countrySpec.generateAllSameDigit()
+
+    /** INVALID — letters where only digits are allowed. */
+    fun generateWrongCharacters(): TaxIdRecord = countrySpec.generateWrongCharacters()
+
+    /** INVALID — known blacklisted/reserved sequence. */
+    fun generateBlacklisted(): TaxIdRecord = countrySpec.generateBlacklisted()
+
     override fun serialize(record: TaxIdRecord, format: OutputFormat): String = when (format) {
         OutputFormat.CSV ->
             "${record.country},${record.type},${record.value},${record.formatted},${record.intent.label}"
@@ -130,9 +154,9 @@ class TaxIdGenerator(
 
     class GermanyIdnr : CountrySpec("DE", "Steuer-IdNr") {
         override fun generateValid(): TaxIdRecord {
-            // First digit 1-9, rest 0-9, with exactly one duplicate
+            // 11 digits total: first 1-9, then 9 more, then the Mod-11,10 check digit.
             val first = Random.nextInt(1, 10).toString()
-            val middle = (1..8).map { Random.nextInt(0, 10) }.joinToString("")
+            val middle = (1..9).map { Random.nextInt(0, 10) }.joinToString("")
             val base10 = first + middle
             val full = base10 + TaxIdAlgorithms.idnrCheckDigit(base10)
             return record(full, TaxIdIntent.Valid)

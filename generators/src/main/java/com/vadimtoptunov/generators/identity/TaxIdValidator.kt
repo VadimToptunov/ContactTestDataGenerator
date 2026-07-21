@@ -90,6 +90,9 @@ object TaxIdValidator {
         if (d.length != 12)
             return fail(input, "RU", "ИНН", FailureReason.WRONG_LENGTH,
                 "Expected 12 digits, got ${d.length}")
+        if (d.all { it == d[0] })
+            return fail(input, "RU", "ИНН", FailureReason.BLACKLISTED,
+                "All-same-digit INN is reserved")
         if (!TaxIdAlgorithms.innPersonalValid(d))
             return fail(input, "RU", "ИНН", FailureReason.FAILED_CHECKSUM,
                 "INN check digits (positions 11-12) do not match")
@@ -119,6 +122,9 @@ object TaxIdValidator {
         if (!clean.take(8).all { it.isDigit() })
             return fail(input, "ES", "NIF", FailureReason.WRONG_CHARACTERS,
                 "First 8 characters must be digits")
+        if (clean.take(8).all { it == clean[0] })
+            return fail(input, "ES", "NIF", FailureReason.BLACKLISTED,
+                "All-same-digit NIF is reserved")
         if (!TaxIdAlgorithms.nifValid(clean))
             return fail(input, "ES", "NIF", FailureReason.FAILED_CHECKSUM,
                 "Letter ${clean.last()} is incorrect (expected ${TaxIdAlgorithms.nifLetter(clean.take(8))})")

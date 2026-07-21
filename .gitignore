@@ -23,3 +23,9 @@ output.json
 *.hprof
 *.log
 *.salive
+
+# Gradle build output for every module (root /build only covers the root)
+build/
+
+# Stray AI-assistant session scratch dirs
+claude-*/

@@ -71,7 +71,7 @@ class HcePassportService : HostApduService() {
         super.onCreate()
         // Ensure CSCA + DS keys exist before any NFC session starts
         try {
-            CsaKeyStore.ensureInitialised(applicationContext)
+            CsaKeyStore.ensureInitialised()
         } catch (e: Exception) {
             Log.e(tag, "CsaKeyStore init failed", e)
         }
@@ -192,9 +192,8 @@ class HcePassportService : HostApduService() {
         }
 
         return try {
-            val ctx   = applicationContext
-            val dsCert = CsaKeyStore.dsCertificate(ctx)
-            val dsKey  = CsaKeyStore.dsPrivateKey(ctx)
+            val dsCert = CsaKeyStore.dsCertificate()
+            val dsKey  = CsaKeyStore.dsPrivateKey()
 
             val sod = SodBuilder.build(
                 dg1Bytes = cachedDg1!!,

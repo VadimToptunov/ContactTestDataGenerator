@@ -187,13 +187,13 @@ fun NewIdentityScreen(vm: IdentityViewModel = viewModel()) {
                 val nfcRequest = when (nfcMode) {
                     NfcMode.NONE           -> NfcRequest.None
                     NfcMode.SAME_AS_HOLDER -> NfcRequest.SameAsHolder(
-                        chipState      = nfcChipState,
-                        facePhotoState = facePhotoState
+                        chipState = nfcChipState,
+                        faceState = facePhotoState
                     )
                     NfcMode.THIRD_PARTY    -> NfcRequest.ThirdParty(
                         thirdPartyCountry = thirdPartyCode,
                         chipState         = nfcChipState,
-                        facePhotoState    = facePhotoState
+                        faceState         = facePhotoState
                     )
                 }
                 vm.generate(

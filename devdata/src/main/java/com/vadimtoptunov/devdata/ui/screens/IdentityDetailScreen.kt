@@ -74,7 +74,7 @@ fun IdentityDetailScreen(
 
             // ── MRZ ────────────────────────────────────────────────────────
             val doc = identity?.primaryDocument
-            val mrz = doc?.mrzData
+            val mrz = doc?.mrz
             if (mrz != null) {
                 SectionCard("MRZ") {
                     Text(
@@ -226,17 +226,17 @@ private fun discrepancyLabel(d: DocumentDiscrepancy): String = when (d) {
 
 private fun discrepancyDetail(d: DocumentDiscrepancy): String = when (d) {
     is DocumentDiscrepancy.MrzNameVsVisual      ->
-        "MRZ name \"${d.mrzValue}\" differs from visual \"${d.visualValue}\""
+        "MRZ name \"${d.mrzName}\" differs from visual \"${d.visualName}\""
     is DocumentDiscrepancy.MrzDobVsVisual       ->
-        "MRZ date-of-birth \"${d.mrzValue}\" differs from visual \"${d.visualValue}\""
+        "MRZ date-of-birth \"${d.mrzDob.mrz}\" differs from visual \"${d.visualDob.mrz}\""
     is DocumentDiscrepancy.MrzNumberVsVisual    ->
-        "MRZ doc number \"${d.mrzValue}\" differs from visual \"${d.visualValue}\""
+        "MRZ doc number \"${d.mrzNumber}\" differs from visual \"${d.visualNumber}\""
     is DocumentDiscrepancy.MrzExpiryVsVisual    ->
-        "MRZ expiry \"${d.mrzValue}\" differs from visual \"${d.visualValue}\""
+        "MRZ expiry \"${d.mrzExpiry.mrz}\" differs from visual \"${d.visualExpiry.mrz}\""
     is DocumentDiscrepancy.ChipMrzVsPrinted     ->
-        "Chip MRZ differs from printed MRZ (field: ${d.field})"
+        "Chip MRZ \"${d.chipMrz}\" differs from printed MRZ \"${d.printedMrz}\""
     is DocumentDiscrepancy.ChipIdentityVsDocument ->
-        "Chip holds identity from ${d.chipCountry} — document country is ${d.documentCountry}"
+        "Chip holds identity \"${d.chipName}\" — document is \"${d.documentName}\""
     is DocumentDiscrepancy.ChipFaceVsDocument   ->
-        "Chip face: ${d.chipFaceState} — does not match document holder"
+        "Chip face: ${d.faceState.label} — does not match document holder"
 }

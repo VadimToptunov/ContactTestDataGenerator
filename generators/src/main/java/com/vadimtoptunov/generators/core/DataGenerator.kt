@@ -33,6 +33,29 @@ interface DataGenerator<T> {
     fun generateBatch(count: Int): List<T> = List(count) { generate() }
 
     /**
+     * Generate a single record with deterministic randomness.
+     *
+     * Default implementation ignores seed and delegates to [generate].
+     * Generators that support reproducibility should override this method
+     * to use [SeededRandom] internally.
+     *
+     * @param seed The seed value for reproducible generation
+     */
+    fun generate(seed: Long): T = generate()
+
+    /**
+     * Generate [count] records with deterministic sequence.
+     *
+     * Each record uses an incrementing seed (seed, seed+1, seed+2, ...)
+     * ensuring the same batch is produced for the same starting seed.
+     *
+     * @param count Number of records to generate
+     * @param seed Starting seed value
+     */
+    fun generateBatch(count: Int, seed: Long): List<T> =
+        List(count) { index -> generate(seed + index) }
+
+    /**
      * Serialize a single record to the given [format].
      * @throws UnsupportedOperationException if [format] is not in [supportedFormats]
      */

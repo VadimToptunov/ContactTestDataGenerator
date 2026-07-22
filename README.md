@@ -5,9 +5,8 @@ Generate test contacts in VCF format for testing purposes.
 ## Features ✨
 
 - 📄 **VCF File Generation** - Creates standard vCard 3.0 files
-- 🌍 **Multilingual Support** - 7 languages (English, Russian, Ukrainian, Spanish, Arabic, Hebrew, Persian)
+- 🌍 **Multilingual Support** - 4 languages (English, Russian, Ukrainian, Spanish)
 - 🎨 **Modern UI** - Built with Jetpack Compose and Material Design 3
-- 🔄 **RTL Support** - Full support for right-to-left languages
 - 📤 **Easy Sharing** - Share generated VCF files with any app
 - 🚀 **Fast Generation** - Create up to 10,000 contacts
 - 📱 **Google Play Ready** - No dangerous permissions required
@@ -38,9 +37,6 @@ Each contact includes:
 - 🇷🇺 Russian
 - 🇺🇦 Ukrainian
 - 🇪🇸 Spanish
-- 🇸🇦 Arabic (RTL)
-- 🇮🇱 Hebrew (RTL)
-- 🇮🇷 Persian (RTL)
 
 See [LOCALIZATION.md](LOCALIZATION.md) for details.
 

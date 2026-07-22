@@ -23,6 +23,13 @@ object GeneratorRegistry {
     val all: List<DataGenerator<*>>
         get() = registry.values.toList()
 
+    /**
+     * All registrations as (id, generator) pairs, in registration order.
+     * The UI needs the id to navigate to a specific tool via [find].
+     */
+    val entries: List<Pair<String, DataGenerator<*>>>
+        get() = registry.map { (id, generator) -> id to generator }
+
     /** Find a generator by its [id], or null if not found. */
     fun find(id: String): DataGenerator<*>? = registry[id]
 

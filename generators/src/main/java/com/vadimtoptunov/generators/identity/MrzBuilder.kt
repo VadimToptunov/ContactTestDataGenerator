@@ -198,7 +198,7 @@ object MrzBuilder {
         val line1 = "$typeCode$country$docNum$docCheck$opt1"
         check(line1.length == 30) { "TD1 line1 length=${line1.length}" }
 
-        // Line 2 (without composite check — placeholder)
+        // Line 2 fields (the composite check digit is computed and appended below)
         val dobStr = dob.mrz
         val dobCheck = checkDigit(dobStr)
         val sexChar = sex.mrzChar

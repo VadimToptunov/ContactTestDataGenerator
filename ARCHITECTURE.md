@@ -158,19 +158,19 @@ Supported formats per generator:
 - [ ] Wire new generators into existing BatchProcessor
 
 ### Phase 3 — Identity generators
-- [ ] `PassportGenerator` (US, UK, DE, RU, UA)
-- [ ] `SsnGenerator` / `NinGenerator`
-- [ ] `AddressGenerator` with locale datasets
+- [x] `SyntheticIdentityGenerator` — full identities incl. passports + ICAO 9303 MRZ (`MrzBuilder`)
+- [x] `TaxIdGenerator` — US SSN, UK NIN, DE, ES, UA, PL, FR, IT tax IDs (with validators)
+- [x] `AddressGenerator` with locale datasets (`WorldPostalFormats`)
 
 ### Phase 4 — Network & Web generators
-- [ ] `IPv4Generator`, `IPv6Generator`, `MacAddressGenerator`
-- [ ] `JwtGenerator` (HS256, configurable claims)
-- [ ] `UuidGenerator` (v4 + v7)
+- [x] `IPv4Generator`, `IPv6Generator`, `MacAddressGenerator`
+- [x] `JwtGenerator` (HS256/RS256/none, configurable claims)
+- [x] `UuidGenerator` (v4 + v7)
 
 ### Phase 5 — UI redesign
-- [ ] Tool picker screen (grid of generator cards)
-- [ ] Per-tool configuration screen (driven by `DataGenerator.name/description`)
-- [ ] Unified export screen (format picker + share/save)
+- [x] Tool picker screen (registry-driven, grouped generator cards) — `devtools/DevToolsScreen`
+- [x] Per-tool configuration screen (count, output format, reproducible seed)
+- [x] Unified export screen (format picker + copy/share via `DevToolsExporter`)
 - [ ] History screen shows all generator types, not just contacts
 
 ---

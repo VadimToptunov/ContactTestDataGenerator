@@ -44,16 +44,41 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(viewModel)
+                    AppRoot(viewModel)
                 }
             }
         }
     }
 }
 
+/**
+ * Top-level navigation between the Contacts generator and the Developer Tools
+ * Factory. Kept intentionally simple (a single boolean) since there are only
+ * two destinations at this level.
+ */
+@Composable
+fun AppRoot(viewModel: MainViewModel) {
+    var showDeveloperTools by remember { mutableStateOf(false) }
+    val isPremium by viewModel.billingManager.isPremium.collectAsStateWithLifecycle()
+    val activity = LocalContext.current as? ComponentActivity
+
+    if (showDeveloperTools) {
+        com.vadimtoptunov.contacttestdatagenerator.devtools.DevToolsFlow(
+            isPremium = isPremium,
+            onRequestUpgrade = { activity?.let { viewModel.purchasePremium(it) } },
+            onExit = { showDeveloperTools = false },
+        )
+    } else {
+        MainScreen(
+            viewModel = viewModel,
+            onOpenDeveloperTools = { showDeveloperTools = true },
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen(viewModel: MainViewModel, onOpenDeveloperTools: () -> Unit) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val fileHistory by viewModel.fileHistory.collectAsStateWithLifecycle()
     val isPremium by viewModel.billingManager.isPremium.collectAsStateWithLifecycle()
@@ -186,7 +211,44 @@ fun MainScreen(viewModel: MainViewModel) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
+
+            // Entry point to the Developer Tools Factory (cards, IBANs, IPs, JWTs, …)
+            Card(
+                onClick = onOpenDeveloperTools,
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(text = "🛠", style = MaterialTheme.typography.headlineSmall)
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Developer Tools",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Text(
+                            text = "Cards, IBANs, IPs, JWTs, passwords, addresses & more",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
             
             // Input field

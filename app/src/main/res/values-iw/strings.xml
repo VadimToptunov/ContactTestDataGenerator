@@ -24,7 +24,81 @@
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ הצלחה!</string>
     <string name="error_title">⚠ שגיאה</string>
-    
+    <!-- File History -->
+    <string name="history_title">היסטוריית קבצים</string>
+    <string name="history_empty">אין קבצים עדיין</string>
+    <string name="history_empty_description">קבצי VCF שנוצרו יופיעו כאן</string>
+    <string name="history_delete">מחק</string>
+    <string name="history_share">שתף</string>
+    <string name="history_clear_all">נקה הכל</string>
+    <string name="history_confirm_delete">למחוק קובץ זה?</string>
+    <string name="history_confirm_clear">למחוק את כל הקבצים?</string>
+    <string name="history_contacts">%d אנשי קשר</string>
+    <!-- Premium / Billing -->
+    <string name="premium_badge">PRO</string>
+    <string name="premium_title">שדרג ל-Pro</string>
+    <string name="premium_description">פתח את כל התכונות</string>
+    <string name="premium_feature_1">צור עד 10,000 אנשי קשר</string>
+    <string name="premium_feature_2">היסטוריית קבצים ללא הגבלה</string>
+    <string name="premium_feature_3">תמיכה בעדיפות גבוהה</string>
+    <string name="premium_feature_4">ללא פרסומות (בעתיד)</string>
+    <string name="premium_price">$2.99</string>
+    <string name="premium_button">שדרג ל-Pro</string>
+    <string name="premium_restore">שחזר רכישות</string>
+    <string name="premium_thanks">תודה על התמיכה שלך!</string>
+    <string name="premium_limit_reached">שדרג ל-Pro עבור עד 10,000 אנשי קשר</string>
+    <string name="free_limit">חינם: עד 1,000 אנשי קשר</string>
+    <string name="pro_limit">Pro: עד 10,000 אנשי קשר</string>
+    <!-- Field Settings -->
+    <string name="settings_title">הגדרות שדות</string>
+    <string name="settings_description">התאם אישית את שדות איש הקשר</string>
+    <string name="settings_field_name">שם מלא</string>
+    <string name="settings_field_phone">מספר טלפון</string>
+    <string name="settings_field_email">כתובת דוא\"ל</string>
+    <string name="settings_field_company">חברה</string>
+    <string name="settings_field_job_title">תפקיד</string>
+    <string name="settings_reset">אפס לברירת המחדל</string>
+    <string name="settings_at_least_one">יש לבחור לפחות שדה אחד</string>
+    <!-- Templates -->
+    <string name="templates_title">תבניות</string>
+    <string name="templates_empty">לא נשמרו תבניות</string>
+    <string name="templates_empty_description">שמור את ההגדרות המועדפות עליך כתבניות</string>
+    <string name="templates_save">שמור כתבנית</string>
+    <string name="templates_save_dialog_title">שמור תבנית</string>
+    <string name="templates_save_dialog_hint">שם התבנית</string>
+    <string name="templates_save_dialog_description">תן שם לתבנית זו</string>
+    <string name="templates_load">טען</string>
+    <string name="templates_delete">מחק</string>
+    <string name="templates_export">ייצא</string>
+    <string name="templates_export_all">ייצא הכל</string>
+    <string name="templates_import">ייבא תבנית</string>
+    <string name="templates_imported">התבנית יובאה!</string>
+    <string name="templates_import_error">ייבוא התבנית נכשל</string>
+    <string name="templates_exported">התבנית יוצאה!</string>
+    <string name="templates_export_error">ייצוא התבנית נכשל</string>
+    <string name="templates_name_required">נדרש שם תבנית</string>
+    <string name="templates_confirm_delete">למחוק תבנית זו?</string>
+    <!-- Batch Processing -->
+    <string name="batch_title">עיבוד באצווה</string>
+    <string name="batch_empty">אין משימות באצווה</string>
+    <string name="batch_add_job">הוסף משימה</string>
+    <string name="batch_start">התחל אצווה</string>
+    <string name="batch_cancel">בטל אצווה</string>
+    <string name="batch_clear">נקה</string>
+    <string name="batch_processing">מעבד אצווה…</string>
+    <string name="batch_job_name">שם המשימה</string>
+    <string name="batch_job_count">מספר אנשי קשר</string>
+    <string name="batch_completed">האצווה הושלמה!</string>
+    <string name="batch_success_count">הצליחו: %d</string>
+    <string name="batch_failed_count">נכשלו: %d</string>
+    <string name="batch_job_pending">ממתין</string>
+    <string name="batch_job_running">פועל</string>
+    <string name="batch_job_completed">הושלם</string>
+    <string name="batch_job_failed">נכשל</string>
+    <string name="batch_job_cancelled">בוטל</string>
+    <string name="batch_from_template">צור מתבנית</string>
+    <string name="batch_overall_progress">כולל: %d%%</string>
+    <string name="batch_job_progress">משימה %1$d/%2$d</string>
     <plurals name="contacts_generated">
         <item quantity="one">איש קשר %d נוצר בהצלחה!</item>
         <item quantity="two">%d אנשי קשר נוצרו בהצלחה!</item>
@@ -32,4 +106,3 @@
         <item quantity="other">%d אנשי קשר נוצרו בהצלחה!</item>
     </plurals>
 </resources>
-

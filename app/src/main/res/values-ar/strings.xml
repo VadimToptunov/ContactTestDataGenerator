@@ -24,7 +24,81 @@
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ نجح!</string>
     <string name="error_title">⚠ خطأ</string>
-    
+    <!-- File History -->
+    <string name="history_title">سجل الملفات</string>
+    <string name="history_empty">لا توجد ملفات بعد</string>
+    <string name="history_empty_description">ستظهر ملفات VCF المُنشأة هنا</string>
+    <string name="history_delete">حذف</string>
+    <string name="history_share">مشاركة</string>
+    <string name="history_clear_all">مسح الكل</string>
+    <string name="history_confirm_delete">هل تريد حذف هذا الملف؟</string>
+    <string name="history_confirm_clear">هل تريد حذف جميع الملفات؟</string>
+    <string name="history_contacts">%d جهة اتصال</string>
+    <!-- Premium / Billing -->
+    <string name="premium_badge">PRO</string>
+    <string name="premium_title">الترقية إلى النسخة الاحترافية</string>
+    <string name="premium_description">افتح جميع الميزات</string>
+    <string name="premium_feature_1">إنشاء ما يصل إلى 10,000 جهة اتصال</string>
+    <string name="premium_feature_2">سجل ملفات غير محدود</string>
+    <string name="premium_feature_3">دعم ذو أولوية</string>
+    <string name="premium_feature_4">بدون إعلانات (مستقبلاً)</string>
+    <string name="premium_price">$2.99</string>
+    <string name="premium_button">الترقية إلى النسخة الاحترافية</string>
+    <string name="premium_restore">استعادة المشتريات</string>
+    <string name="premium_thanks">شكرًا لدعمك!</string>
+    <string name="premium_limit_reached">قم بالترقية إلى النسخة الاحترافية للحصول على ما يصل إلى 10,000 جهة اتصال</string>
+    <string name="free_limit">المجانية: حتى 1,000 جهة اتصال</string>
+    <string name="pro_limit">الاحترافية: حتى 10,000 جهة اتصال</string>
+    <!-- Field Settings -->
+    <string name="settings_title">إعدادات الحقول</string>
+    <string name="settings_description">تخصيص حقول جهة الاتصال</string>
+    <string name="settings_field_name">الاسم الكامل</string>
+    <string name="settings_field_phone">رقم الهاتف</string>
+    <string name="settings_field_email">عنوان البريد الإلكتروني</string>
+    <string name="settings_field_company">الشركة</string>
+    <string name="settings_field_job_title">المسمى الوظيفي</string>
+    <string name="settings_reset">إعادة التعيين إلى الإعدادات الافتراضية</string>
+    <string name="settings_at_least_one">يجب تحديد حقل واحد على الأقل</string>
+    <!-- Templates -->
+    <string name="templates_title">القوالب</string>
+    <string name="templates_empty">لا توجد قوالب محفوظة</string>
+    <string name="templates_empty_description">احفظ إعداداتك المفضلة كقوالب</string>
+    <string name="templates_save">حفظ كقالب</string>
+    <string name="templates_save_dialog_title">حفظ القالب</string>
+    <string name="templates_save_dialog_hint">اسم القالب</string>
+    <string name="templates_save_dialog_description">امنح هذا القالب اسمًا</string>
+    <string name="templates_load">تحميل</string>
+    <string name="templates_delete">حذف</string>
+    <string name="templates_export">تصدير</string>
+    <string name="templates_export_all">تصدير الكل</string>
+    <string name="templates_import">استيراد قالب</string>
+    <string name="templates_imported">تم استيراد القالب!</string>
+    <string name="templates_import_error">فشل استيراد القالب</string>
+    <string name="templates_exported">تم تصدير القالب!</string>
+    <string name="templates_export_error">فشل تصدير القالب</string>
+    <string name="templates_name_required">اسم القالب مطلوب</string>
+    <string name="templates_confirm_delete">هل تريد حذف هذا القالب؟</string>
+    <!-- Batch Processing -->
+    <string name="batch_title">المعالجة الدفعية</string>
+    <string name="batch_empty">لا توجد مهام دفعية</string>
+    <string name="batch_add_job">إضافة مهمة</string>
+    <string name="batch_start">بدء الدفعة</string>
+    <string name="batch_cancel">إلغاء الدفعة</string>
+    <string name="batch_clear">مسح</string>
+    <string name="batch_processing">جارٍ معالجة الدفعة…</string>
+    <string name="batch_job_name">اسم المهمة</string>
+    <string name="batch_job_count">عدد جهات الاتصال</string>
+    <string name="batch_completed">اكتملت الدفعة!</string>
+    <string name="batch_success_count">ناجحة: %d</string>
+    <string name="batch_failed_count">فاشلة: %d</string>
+    <string name="batch_job_pending">قيد الانتظار</string>
+    <string name="batch_job_running">قيد التشغيل</string>
+    <string name="batch_job_completed">مكتملة</string>
+    <string name="batch_job_failed">فاشلة</string>
+    <string name="batch_job_cancelled">ملغاة</string>
+    <string name="batch_from_template">إنشاء من قالب</string>
+    <string name="batch_overall_progress">الإجمالي: %d%%</string>
+    <string name="batch_job_progress">المهمة %1$d/%2$d</string>
     <plurals name="contacts_generated">
         <item quantity="zero">لم يتم إنشاء أي جهة اتصال</item>
         <item quantity="one">تم إنشاء جهة اتصال واحدة بنجاح!</item>
@@ -34,4 +108,3 @@
         <item quantity="other">تم إنشاء %d جهة اتصال بنجاح!</item>
     </plurals>
 </resources>
-

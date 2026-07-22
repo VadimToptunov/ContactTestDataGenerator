@@ -24,7 +24,87 @@
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ Успішно!</string>
     <string name="error_title">⚠ Помилка</string>
-    
+
+    <!-- File History -->
+    <string name="history_title">Історія файлів</string>
+    <string name="history_empty">Немає файлів</string>
+    <string name="history_empty_description">Створені VCF-файли з\'являться тут</string>
+    <string name="history_delete">Видалити</string>
+    <string name="history_share">Поділитися</string>
+    <string name="history_clear_all">Очистити все</string>
+    <string name="history_confirm_delete">Видалити цей файл?</string>
+    <string name="history_confirm_clear">Видалити всі файли?</string>
+    <string name="history_contacts">%d контактів</string>
+
+    <!-- Premium / Billing -->
+    <string name="premium_badge">PRO</string>
+    <string name="premium_title">Оновити до Pro</string>
+    <string name="premium_description">Розблокуйте всі можливості</string>
+    <string name="premium_feature_1">Генерація до 10 000 контактів</string>
+    <string name="premium_feature_2">Безлімітна історія файлів</string>
+    <string name="premium_feature_3">Пріоритетна підтримка</string>
+    <string name="premium_feature_4">Без реклами (у майбутньому)</string>
+    <string name="premium_price">$2.99</string>
+    <string name="premium_button">Оновити до Pro</string>
+    <string name="premium_restore">Відновити покупки</string>
+    <string name="premium_thanks">Дякуємо за вашу підтримку!</string>
+    <string name="premium_limit_reached">Оновіться до Pro для генерації до 10 000 контактів</string>
+    <string name="free_limit">Безкоштовно: до 1 000 контактів</string>
+    <string name="pro_limit">Pro: до 10 000 контактів</string>
+
+    <!-- Field Settings -->
+    <string name="settings_title">Налаштування полів</string>
+    <string name="settings_description">Налаштуйте поля контактів</string>
+    <string name="settings_field_name">Повне ім\'я</string>
+    <string name="settings_field_phone">Номер телефону</string>
+    <string name="settings_field_email">Адреса електронної пошти</string>
+    <string name="settings_field_company">Компанія</string>
+    <string name="settings_field_job_title">Посада</string>
+    <string name="settings_reset">Скинути до типових</string>
+    <string name="settings_at_least_one">Потрібно вибрати хоча б одне поле</string>
+
+    <!-- Templates -->
+    <string name="templates_title">Шаблони</string>
+    <string name="templates_empty">Немає збережених шаблонів</string>
+    <string name="templates_empty_description">Зберігайте улюблені налаштування як шаблони</string>
+    <string name="templates_save">Зберегти як шаблон</string>
+    <string name="templates_save_dialog_title">Зберегти шаблон</string>
+    <string name="templates_save_dialog_hint">Назва шаблону</string>
+    <string name="templates_save_dialog_description">Введіть назву для цього шаблону</string>
+    <string name="templates_load">Завантажити</string>
+    <string name="templates_delete">Видалити</string>
+    <string name="templates_export">Експортувати</string>
+    <string name="templates_export_all">Експортувати все</string>
+    <string name="templates_import">Імпортувати шаблон</string>
+    <string name="templates_imported">Шаблон імпортовано!</string>
+    <string name="templates_import_error">Не вдалося імпортувати шаблон</string>
+    <string name="templates_exported">Шаблон експортовано!</string>
+    <string name="templates_export_error">Не вдалося експортувати шаблон</string>
+    <string name="templates_name_required">Потрібна назва шаблону</string>
+    <string name="templates_confirm_delete">Видалити цей шаблон?</string>
+
+    <!-- Batch Processing -->
+    <string name="batch_title">Пакетна обробка</string>
+    <string name="batch_empty">Немає завдань</string>
+    <string name="batch_add_job">Додати завдання</string>
+    <string name="batch_start">Почати обробку</string>
+    <string name="batch_cancel">Скасувати обробку</string>
+    <string name="batch_clear">Очистити</string>
+    <string name="batch_processing">Обробка пакета…</string>
+    <string name="batch_job_name">Назва завдання</string>
+    <string name="batch_job_count">Кількість контактів</string>
+    <string name="batch_completed">Пакет завершено!</string>
+    <string name="batch_success_count">Успішно: %d</string>
+    <string name="batch_failed_count">Помилок: %d</string>
+    <string name="batch_job_pending">Очікування</string>
+    <string name="batch_job_running">Виконується</string>
+    <string name="batch_job_completed">Завершено</string>
+    <string name="batch_job_failed">Помилка</string>
+    <string name="batch_job_cancelled">Скасовано</string>
+    <string name="batch_from_template">Створити з шаблону</string>
+    <string name="batch_overall_progress">Загалом: %d%%</string>
+    <string name="batch_job_progress">Завдання %1$d/%2$d</string>
+
     <plurals name="contacts_generated">
         <item quantity="one">%d контакт успішно створено!</item>
         <item quantity="few">%d контакти успішно створено!</item>
@@ -32,4 +112,3 @@
         <item quantity="other">%d контактів успішно створено!</item>
     </plurals>
 </resources>
-

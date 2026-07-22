@@ -24,10 +24,83 @@
     <string name="progress_percentage">%d%%</string>
     <string name="success_title">✓ ¡Éxito!</string>
     <string name="error_title">⚠ Error</string>
-    
+    <!-- File History -->
+    <string name="history_title">Historial de archivos</string>
+    <string name="history_empty">Aún no hay archivos</string>
+    <string name="history_empty_description">Los archivos VCF generados aparecerán aquí</string>
+    <string name="history_delete">Eliminar</string>
+    <string name="history_share">Compartir</string>
+    <string name="history_clear_all">Borrar todo</string>
+    <string name="history_confirm_delete">¿Eliminar este archivo?</string>
+    <string name="history_confirm_clear">¿Eliminar todos los archivos?</string>
+    <string name="history_contacts">%d contactos</string>
+    <!-- Premium / Billing -->
+    <string name="premium_badge">PRO</string>
+    <string name="premium_title">Actualizar a Pro</string>
+    <string name="premium_description">Desbloquee todas las funciones</string>
+    <string name="premium_feature_1">Genere hasta 10,000 contactos</string>
+    <string name="premium_feature_2">Historial de archivos ilimitado</string>
+    <string name="premium_feature_3">Soporte prioritario</string>
+    <string name="premium_feature_4">Sin anuncios (próximamente)</string>
+    <string name="premium_price">$2.99</string>
+    <string name="premium_button">Actualizar a Pro</string>
+    <string name="premium_restore">Restaurar compras</string>
+    <string name="premium_thanks">¡Gracias por su apoyo!</string>
+    <string name="premium_limit_reached">Actualice a Pro para obtener hasta 10,000 contactos</string>
+    <string name="free_limit">Gratis: hasta 1,000 contactos</string>
+    <string name="pro_limit">Pro: hasta 10,000 contactos</string>
+    <!-- Field Settings -->
+    <string name="settings_title">Configuración de campos</string>
+    <string name="settings_description">Personalice los campos de contacto</string>
+    <string name="settings_field_name">Nombre completo</string>
+    <string name="settings_field_phone">Número de teléfono</string>
+    <string name="settings_field_email">Dirección de correo electrónico</string>
+    <string name="settings_field_company">Empresa</string>
+    <string name="settings_field_job_title">Cargo</string>
+    <string name="settings_reset">Restablecer valores predeterminados</string>
+    <string name="settings_at_least_one">Debe seleccionar al menos un campo</string>
+    <!-- Templates -->
+    <string name="templates_title">Plantillas</string>
+    <string name="templates_empty">No hay plantillas guardadas</string>
+    <string name="templates_empty_description">Guarde su configuración favorita como plantillas</string>
+    <string name="templates_save">Guardar como plantilla</string>
+    <string name="templates_save_dialog_title">Guardar plantilla</string>
+    <string name="templates_save_dialog_hint">Nombre de la plantilla</string>
+    <string name="templates_save_dialog_description">Asigne un nombre a esta plantilla</string>
+    <string name="templates_load">Cargar</string>
+    <string name="templates_delete">Eliminar</string>
+    <string name="templates_export">Exportar</string>
+    <string name="templates_export_all">Exportar todo</string>
+    <string name="templates_import">Importar plantilla</string>
+    <string name="templates_imported">¡Plantilla importada!</string>
+    <string name="templates_import_error">Error al importar la plantilla</string>
+    <string name="templates_exported">¡Plantilla exportada!</string>
+    <string name="templates_export_error">Error al exportar la plantilla</string>
+    <string name="templates_name_required">El nombre de la plantilla es obligatorio</string>
+    <string name="templates_confirm_delete">¿Eliminar esta plantilla?</string>
+    <!-- Batch Processing -->
+    <string name="batch_title">Procesamiento por lotes</string>
+    <string name="batch_empty">No hay trabajos por lotes</string>
+    <string name="batch_add_job">Agregar trabajo</string>
+    <string name="batch_start">Iniciar lote</string>
+    <string name="batch_cancel">Cancelar lote</string>
+    <string name="batch_clear">Borrar</string>
+    <string name="batch_processing">Procesando lote…</string>
+    <string name="batch_job_name">Nombre del trabajo</string>
+    <string name="batch_job_count">Cantidad de contactos</string>
+    <string name="batch_completed">¡Lote completado!</string>
+    <string name="batch_success_count">Exitosos: %d</string>
+    <string name="batch_failed_count">Fallidos: %d</string>
+    <string name="batch_job_pending">Pendiente</string>
+    <string name="batch_job_running">En ejecución</string>
+    <string name="batch_job_completed">Completado</string>
+    <string name="batch_job_failed">Fallido</string>
+    <string name="batch_job_cancelled">Cancelado</string>
+    <string name="batch_from_template">Crear desde plantilla</string>
+    <string name="batch_overall_progress">General: %d%%</string>
+    <string name="batch_job_progress">Trabajo %1$d/%2$d</string>
     <plurals name="contacts_generated">
         <item quantity="one">¡%d contacto generado exitosamente!</item>
         <item quantity="other">¡%d contactos generados exitosamente!</item>
     </plurals>
 </resources>
-

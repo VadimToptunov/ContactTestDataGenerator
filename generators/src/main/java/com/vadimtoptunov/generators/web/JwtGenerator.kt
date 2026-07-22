@@ -116,8 +116,26 @@ class JwtGenerator(
     private fun base64UrlEncode(data: String): String =
         base64UrlEncode(data.toByteArray(Charsets.UTF_8))
 
-    private fun base64UrlEncode(data: ByteArray): String =
-        java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(data)
+    private fun base64UrlEncode(data: ByteArray): String {
+        // Pure-Kotlin base64url (RFC 4648 §5) without padding. Implemented directly
+        // instead of java.util.Base64 (which needs API 26) so this works on minSdk 25
+        // and inside plain JVM unit tests alike.
+        val encoded = StringBuilder((data.size + 2) / 3 * 4)
+        var byteIndex = 0
+        while (byteIndex < data.size) {
+            val firstByte = data[byteIndex].toInt() and 0xFF
+            val secondByte = if (byteIndex + 1 < data.size) data[byteIndex + 1].toInt() and 0xFF else 0
+            val thirdByte = if (byteIndex + 2 < data.size) data[byteIndex + 2].toInt() and 0xFF else 0
+            val threeBytes = (firstByte shl 16) or (secondByte shl 8) or thirdByte
+
+            encoded.append(BASE64_URL_ALPHABET[(threeBytes shr 18) and 0x3F])
+            encoded.append(BASE64_URL_ALPHABET[(threeBytes shr 12) and 0x3F])
+            if (byteIndex + 1 < data.size) encoded.append(BASE64_URL_ALPHABET[(threeBytes shr 6) and 0x3F])
+            if (byteIndex + 2 < data.size) encoded.append(BASE64_URL_ALPHABET[threeBytes and 0x3F])
+            byteIndex += 3
+        }
+        return encoded.toString()
+    }
 
     private fun generateSubject(): String {
         val prefixes = listOf("user", "admin", "service", "test", "api")
@@ -159,6 +177,10 @@ class JwtGenerator(
 
     companion object {
         const val ID = "jwt_generator"
+
+        /** RFC 4648 §5 base64url alphabet ('+'→'-', '/'→'_'), used by [base64UrlEncode]. */
+        private const val BASE64_URL_ALPHABET =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
 
         private fun generateDefaultSecret(): String {
             val chars = ('A'..'Z') + ('a'..'z') + ('0'..'9')

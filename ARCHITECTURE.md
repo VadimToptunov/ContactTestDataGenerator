@@ -152,10 +152,10 @@ Supported formats per generator:
 - [x] `IbanGenerator` (8 countries, Mod-97 valid)
 
 ### Phase 2 — Contacts refactor
-- [ ] Extract `ContactRecord` data class
-- [ ] Refactor `FakeDataGenerator` → `ContactGenerator : DataGenerator<ContactRecord>`
-- [ ] Add CSV/JSON/SQL serialization to contacts
-- [ ] Wire new generators into existing BatchProcessor
+- [x] Extract `ContactRecord` data class (`generators/contacts`)
+- [x] Refactor `FakeDataGenerator` → `ContactGenerator : DataGenerator<ContactRecord>` (registered; appears in the tool picker)
+- [x] Add CSV/JSON/SQL serialization to contacts (plus VCF); `VcfGenerator` now delegates to `ContactGenerator`
+- [ ] Wire the registry generators into `BatchProcessor` (still contacts/VCF-only)
 
 ### Phase 3 — Identity generators
 - [x] `SyntheticIdentityGenerator` — full identities incl. passports + ICAO 9303 MRZ (`MrzBuilder`)

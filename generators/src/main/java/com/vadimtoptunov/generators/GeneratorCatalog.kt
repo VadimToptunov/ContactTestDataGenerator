@@ -1,5 +1,6 @@
 package com.vadimtoptunov.generators
 
+import com.vadimtoptunov.generators.contacts.ContactGenerator
 import com.vadimtoptunov.generators.finance.CardGenerator
 import com.vadimtoptunov.generators.finance.IbanGenerator
 import com.vadimtoptunov.generators.identity.TaxIdGenerator
@@ -13,6 +14,7 @@ import com.vadimtoptunov.generators.identity.TaxIdGenerator
  * know the concrete generator classes.
  *
  * This ties together the module-specific registration groups:
+ * - Contacts: [ContactGenerator]
  * - Finance: [CardGenerator], [IbanGenerator]
  * - Identity: [TaxIdGenerator]
  * - Network & Web: [NetworkWebGenerators] (IPv4/IPv6/MAC, UUID, JWT)
@@ -31,6 +33,9 @@ object GeneratorCatalog {
         if (alreadyRegistered) return
         synchronized(this) {
             if (alreadyRegistered) return
+
+            // Contacts
+            ContactGenerator.registerAll()
 
             // Finance
             CardGenerator.registerAll()

@@ -17,6 +17,7 @@ enum class DevToolCategory(
     val requiresPremium: Boolean,
     private val idPrefixes: List<String>,
 ) {
+    CONTACTS("Contacts", "👤", requiresPremium = false, idPrefixes = listOf("contact_generator")),
     FINANCE("Finance", "💳", requiresPremium = true, idPrefixes = listOf("card_generator", "iban_generator")),
     IDENTITY("Identity", "🪪", requiresPremium = true, idPrefixes = listOf("taxid_")),
     NETWORK("Network", "🌐", requiresPremium = false, idPrefixes = listOf("ipv4_generator", "ipv6_generator", "mac_generator")),

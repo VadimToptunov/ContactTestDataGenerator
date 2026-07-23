@@ -1,21 +1,27 @@
 package com.vadimtoptunov.contacttestdatagenerator
 
 import android.content.Context
-import android.net.Uri
 import android.os.Environment
-import androidx.core.content.FileProvider
+import com.vadimtoptunov.generators.contacts.ContactFields
+import com.vadimtoptunov.generators.contacts.ContactGenerator
+import com.vadimtoptunov.generators.core.OutputFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileWriter
 
 /**
- * Generator for creating VCF (vCard) files
+ * Writes a VCF (vCard) file of generated contacts.
+ *
+ * The actual contact generation and vCard formatting now live in the shared
+ * [ContactGenerator] (`:generators` library); this class only streams records
+ * to a file and reports progress.
  */
 class VcfGenerator(private val context: Context) {
 
     /**
-     * Generates a VCF file with specified number of contacts
+     * Generates a VCF file with the specified number of contacts.
+     *
      * @param count Number of contacts to generate
      * @param settings Field settings for customization
      * @param onProgress Callback for progress updates
@@ -30,66 +36,30 @@ class VcfGenerator(private val context: Context) {
         val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
             ?: throw IllegalStateException("External storage is unavailable")
         val file = File(externalDir, fileName)
-        
+
+        val generator = ContactGenerator(settings.toContactFields())
+
         FileWriter(file).use { writer ->
             repeat(count) { index ->
-                val contact = generateContact(settings)
-                writer.write(contact)
+                val record = generator.generate()
+                writer.write(generator.serialize(record, OutputFormat.VCF))
                 writer.write("\n")
-                
+
                 withContext(Dispatchers.Main) {
                     onProgress(index + 1, count)
                 }
             }
         }
-        
-        file
-    }
 
-    /**
-     * Generates a single contact in VCF format
-     */
-    private fun generateContact(settings: ContactFieldSettings): String {
-        val name = if (settings.includeName) FakeDataGenerator.generateFullName() else "Contact"
-        val phone = if (settings.includePhone) FakeDataGenerator.generatePhoneNumber() else null
-        val email = if (settings.includeEmail) FakeDataGenerator.generateEmail(name) else null
-        val company = if (settings.includeCompany) FakeDataGenerator.generateCompany() else null
-        val jobTitle = if (settings.includeJobTitle) FakeDataGenerator.generateJobTitle() else null
-        
-        return buildString {
-            appendLine("BEGIN:VCARD")
-            appendLine("VERSION:3.0")
-            
-            if (settings.includeName) {
-                appendLine("FN:$name")
-                
-                // Split name into first and last name
-                val nameParts = name.split(" ")
-                if (nameParts.size >= 2) {
-                    appendLine("N:${nameParts.last()};${nameParts.first()};;;")
-                } else {
-                    appendLine("N:$name;;;;")
-                }
-            }
-            
-            if (phone != null) {
-                appendLine("TEL;TYPE=CELL:$phone")
-            }
-            
-            if (email != null) {
-                appendLine("EMAIL;TYPE=INTERNET:$email")
-            }
-            
-            if (company != null) {
-                appendLine("ORG:$company")
-            }
-            
-            if (jobTitle != null) {
-                appendLine("TITLE:$jobTitle")
-            }
-            
-            appendLine("END:VCARD")
-        }
+        file
     }
 }
 
+/** Map the app's persisted field settings onto the library's [ContactFields]. */
+fun ContactFieldSettings.toContactFields(): ContactFields = ContactFields(
+    includeName = includeName,
+    includePhone = includePhone,
+    includeEmail = includeEmail,
+    includeCompany = includeCompany,
+    includeJobTitle = includeJobTitle,
+)

@@ -62,7 +62,10 @@ class FileHistoryRepository(private val context: Context) {
                         contactCount = obj.getInt("contactCount"),
                         fileSizeBytes = obj.getLong("fileSizeBytes"),
                         timestamp = obj.getLong("timestamp"),
-                        absolutePath = absolutePath
+                        absolutePath = absolutePath,
+                        // Older entries predate these fields → default to contacts/VCF.
+                        dataTypeLabel = obj.optString("dataTypeLabel", "Contacts"),
+                        format = obj.optString("format", "vcf")
                     )
                 } catch (e: Exception) {
                     null
@@ -118,6 +121,8 @@ class FileHistoryRepository(private val context: Context) {
                 put("fileSizeBytes", fileInfo.fileSizeBytes)
                 put("timestamp", fileInfo.timestamp)
                 put("absolutePath", fileInfo.absolutePath)
+                put("dataTypeLabel", fileInfo.dataTypeLabel)
+                put("format", fileInfo.format)
             }
             jsonArray.put(obj)
         }

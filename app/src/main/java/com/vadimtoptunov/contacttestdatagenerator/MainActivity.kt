@@ -382,7 +382,7 @@ fun MainScreen(viewModel: MainViewModel, onOpenDeveloperTools: () -> Unit) {
                     history = fileHistory,
                     expanded = historyExpanded,
                     onExpandToggle = { historyExpanded = !historyExpanded },
-                    onShare = { viewModel.shareVcfFile(it.uri) },
+                    onShare = { viewModel.shareGeneratedFile(it) },
                     onDelete = { viewModel.deleteFile(it) }
                 )
             }
@@ -764,13 +764,18 @@ fun FileHistoryItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
+                val historyTitle = if (file.isContacts) {
+                    stringResource(R.string.history_contacts, file.contactCount)
+                } else {
+                    "${file.contactCount} × ${file.dataTypeLabel}"
+                }
                 Text(
-                    text = stringResource(R.string.history_contacts, file.contactCount),
+                    text = historyTitle,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = "${file.fileSizeFormatted} • ${file.dateFormatted}",
+                    text = "${file.format.uppercase()} • ${file.fileSizeFormatted} • ${file.dateFormatted}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

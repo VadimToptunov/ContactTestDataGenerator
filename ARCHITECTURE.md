@@ -171,7 +171,7 @@ Supported formats per generator:
 - [x] Tool picker screen (registry-driven, grouped generator cards) — `devtools/DevToolsScreen`
 - [x] Per-tool configuration screen (count, output format, reproducible seed)
 - [x] Unified export screen (format picker + copy/share via `DevToolsExporter`)
-- [ ] History screen shows all generator types, not just contacts
+- [x] History screen shows all generator types, not just contacts (format-aware labels + MIME-correct share; batch outputs of any generator land here)
 
 ---
 

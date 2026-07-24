@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.vadimtoptunov.generators.core.GeneratorRegistry
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -136,7 +137,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(chooserIntent)
     }
-    
+
+    /** Share a history entry using the MIME type that matches its format. */
+    fun shareGeneratedFile(fileInfo: VcfFileInfo) {
+        val context = getApplication<Application>()
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            putExtra(Intent.EXTRA_STREAM, fileInfo.uri)
+            type = fileInfo.mimeType
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        val chooserIntent = Intent.createChooser(shareIntent, "Share ${fileInfo.dataTypeLabel}")
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(chooserIntent)
+    }
+
     fun deleteFile(fileInfo: VcfFileInfo) {
         viewModelScope.launch {
             fileHistoryRepository.deleteFile(fileInfo)
@@ -251,12 +265,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         "${getApplication<Application>().packageName}.fileprovider",
                         file
                     )
+                    val job = jobs[jobIndex]
+                    val dataTypeLabel = if (job.generatorId == null) {
+                        "Contacts"
+                    } else {
+                        GeneratorRegistry.find(job.generatorId)?.name ?: "Data"
+                    }
                     val fileInfo = VcfFileInfo(
                         uri = uri,
                         fileName = file.name,
-                        contactCount = jobs[jobIndex].contactCount,
+                        contactCount = job.contactCount,
                         fileSizeBytes = file.length(),
-                        absolutePath = file.absolutePath
+                        absolutePath = file.absolutePath,
+                        dataTypeLabel = dataTypeLabel,
+                        format = job.outputFormat
                     )
                     viewModelScope.launch {
                         fileHistoryRepository.addFile(fileInfo)

@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vadimtoptunov.contacttestdatagenerator.devtools.DevToolsCatalog
 import com.vadimtoptunov.contacttestdatagenerator.ui.theme.ContactTestDataGeneratorTheme
 
 class MainActivity : ComponentActivity() {
@@ -498,11 +499,13 @@ fun MainScreen(viewModel: MainViewModel, onOpenDeveloperTools: () -> Unit) {
         if (showAddBatchJobDialog) {
             AddBatchJobDialog(
                 onDismiss = { showAddBatchJobDialog = false },
-                onAdd = { name, count, settings ->
+                onAdd = { name, count, settings, generatorId, outputFormat ->
                     val newJob = BatchJob(
                         name = name,
                         contactCount = count,
-                        fieldSettings = settings
+                        fieldSettings = settings,
+                        generatorId = generatorId,
+                        outputFormat = outputFormat
                     )
                     batchJobsList = batchJobsList + newJob
                     showAddBatchJobDialog = false
@@ -1050,15 +1053,27 @@ fun TemplateItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBatchJobDialog(
     onDismiss: () -> Unit,
-    onAdd: (name: String, count: Int, settings: ContactFieldSettings) -> Unit,
+    onAdd: (name: String, count: Int, settings: ContactFieldSettings, generatorId: String?, outputFormat: String) -> Unit,
     currentSettings: ContactFieldSettings
 ) {
     var jobName by remember { mutableStateOf("") }
     var jobCount by remember { mutableStateOf("100") }
-    
+
+    // Source options: "Contacts" (built-in) first, then every registry generator.
+    val tools = remember { DevToolsCatalog.toolsByCategory().values.flatten() }
+    // Selected source: null = Contacts (VCF); otherwise a registry tool.
+    var selectedTool by remember { mutableStateOf<com.vadimtoptunov.contacttestdatagenerator.devtools.DevTool?>(null) }
+    var selectedFormat by remember { mutableStateOf(com.vadimtoptunov.generators.core.OutputFormat.VCF as com.vadimtoptunov.generators.core.OutputFormat) }
+    var sourceMenuOpen by remember { mutableStateOf(false) }
+    var formatMenuOpen by remember { mutableStateOf(false) }
+
+    val currentSourceLabel = selectedTool?.displayName ?: "Contacts (VCF)"
+    val availableFormats = selectedTool?.supportedFormats ?: listOf(com.vadimtoptunov.generators.core.OutputFormat.VCF)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(Icons.Default.Add, contentDescription = null) },
@@ -1080,6 +1095,69 @@ fun AddBatchJobDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                // Data source (Contacts or any registry generator)
+                ExposedDropdownMenuBox(
+                    expanded = sourceMenuOpen,
+                    onExpandedChange = { sourceMenuOpen = it }
+                ) {
+                    OutlinedTextField(
+                        value = currentSourceLabel,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Data type") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = sourceMenuOpen) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(expanded = sourceMenuOpen, onDismissRequest = { sourceMenuOpen = false }) {
+                        DropdownMenuItem(
+                            text = { Text("Contacts (VCF)") },
+                            onClick = {
+                                selectedTool = null
+                                selectedFormat = com.vadimtoptunov.generators.core.OutputFormat.VCF
+                                sourceMenuOpen = false
+                            }
+                        )
+                        tools.forEach { tool ->
+                            DropdownMenuItem(
+                                text = { Text(tool.displayName) },
+                                onClick = {
+                                    selectedTool = tool
+                                    selectedFormat = tool.supportedFormats.first()
+                                    sourceMenuOpen = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Output format (only meaningful for registry generators)
+                if (selectedTool != null && availableFormats.size > 1) {
+                    ExposedDropdownMenuBox(
+                        expanded = formatMenuOpen,
+                        onExpandedChange = { formatMenuOpen = it }
+                    ) {
+                        OutlinedTextField(
+                            value = selectedFormat.label,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Format") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = formatMenuOpen) },
+                            modifier = Modifier.menuAnchor().fillMaxWidth()
+                        )
+                        ExposedDropdownMenu(expanded = formatMenuOpen, onDismissRequest = { formatMenuOpen = false }) {
+                            availableFormats.forEach { format ->
+                                DropdownMenuItem(
+                                    text = { Text(format.label) },
+                                    onClick = {
+                                        selectedFormat = format
+                                        formatMenuOpen = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
             }
         },
         confirmButton = {
@@ -1087,7 +1165,7 @@ fun AddBatchJobDialog(
                 onClick = {
                     val count = jobCount.toIntOrNull()
                     if (jobName.isNotBlank() && count != null && count > 0) {
-                        onAdd(jobName, count, currentSettings)
+                        onAdd(jobName, count, currentSettings, selectedTool?.id, selectedFormat.extension)
                     }
                 },
                 enabled = jobName.isNotBlank() && (jobCount.toIntOrNull() ?: 0) > 0
@@ -1209,7 +1287,12 @@ fun BatchJobItem(job: BatchJob, onRemove: (BatchJob) -> Unit, canRemove: Boolean
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier.weight(1f)) {
             Text(job.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-            Text("${job.contactCount} contacts", style = MaterialTheme.typography.bodySmall)
+            val jobSubtitle = if (job.generatorId == null) {
+                "${job.contactCount} contacts"
+            } else {
+                "${job.contactCount} records · ${job.outputFormat.uppercase()}"
+            }
+            Text(jobSubtitle, style = MaterialTheme.typography.bodySmall)
             if (job.status == BatchJobStatus.RUNNING) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(modifier = Modifier.size(12.dp), strokeWidth = 2.dp)

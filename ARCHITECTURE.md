@@ -155,7 +155,7 @@ Supported formats per generator:
 - [x] Extract `ContactRecord` data class (`generators/contacts`)
 - [x] Refactor `FakeDataGenerator` → `ContactGenerator : DataGenerator<ContactRecord>` (registered; appears in the tool picker)
 - [x] Add CSV/JSON/SQL serialization to contacts (plus VCF); `VcfGenerator` now delegates to `ContactGenerator`
-- [ ] Wire the registry generators into `BatchProcessor` (still contacts/VCF-only)
+- [x] Wire the registry generators into `BatchProcessor` — a batch job can run any generator in any supported format (Add-Job dialog has data-type + format pickers; defaults to Contacts/VCF)
 
 ### Phase 3 — Identity generators
 - [x] `SyntheticIdentityGenerator` — full identities incl. passports + ICAO 9303 MRZ (`MrzBuilder`)

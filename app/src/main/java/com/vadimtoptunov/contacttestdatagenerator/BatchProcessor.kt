@@ -3,6 +3,10 @@ package com.vadimtoptunov.contacttestdatagenerator
 import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
+import com.vadimtoptunov.contacttestdatagenerator.devtools.DevToolsExporter
+import com.vadimtoptunov.generators.GeneratorCatalog
+import com.vadimtoptunov.generators.core.GeneratorRegistry
+import com.vadimtoptunov.generators.core.OutputFormat
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,21 +74,30 @@ class BatchProcessor(
             }
             
             try {
-                val file = vcfGenerator.generateVcfFile(
-                    count = job.contactCount,
-                    settings = job.fieldSettings
-                ) { current, total ->
+                val onProgress: (Int, Int) -> Unit = { current, total ->
                     val progress = (current * 100 / total).coerceIn(0, 100)
-                    
+
                     // Update job progress
                     _currentBatch.value = _currentBatch.value.mapIndexed { i, j ->
                         if (i == index) j.copy(progress = progress) else j
                     }
-                    
+
                     // Call onJobProgress on Main dispatcher
                     coroutineScope.launch(Dispatchers.Main) {
                         onJobProgress(index, current, total)
                     }
+                }
+
+                val file = if (job.generatorId == null) {
+                    // Built-in contacts path (streams records to a VCF file).
+                    vcfGenerator.generateVcfFile(
+                        count = job.contactCount,
+                        settings = job.fieldSettings,
+                        onProgress = onProgress,
+                    )
+                } else {
+                    // Any other registry generator, in the job's chosen format.
+                    generateWithRegistryGenerator(job, onProgress)
                 }
                 
                 // Update job status to COMPLETED
@@ -132,6 +145,36 @@ class BatchProcessor(
         }
     }
     
+    /**
+     * Generate a file for a job backed by a registry generator (cards, IBANs,
+     * IPs, etc.) in the job's chosen output format.
+     *
+     * Generic generators produce the whole batch in one step, so progress is
+     * reported as 0% before and 100% after (per-record progress only applies to
+     * the streaming contacts path).
+     */
+    private suspend fun generateWithRegistryGenerator(
+        job: BatchJob,
+        onProgress: (current: Int, total: Int) -> Unit,
+    ): File = withContext(Dispatchers.IO) {
+        GeneratorCatalog.registerAllGenerators()
+        val generator = GeneratorRegistry.find(job.generatorId!!)
+            ?: throw IllegalStateException("Unknown generator: ${job.generatorId}")
+        val format = OutputFormat.all.firstOrNull { it.extension == job.outputFormat }
+            ?: throw IllegalStateException("Unsupported format: ${job.outputFormat}")
+
+        onProgress(0, job.contactCount)
+        val content = DevToolsExporter.generateSerialized(
+            generator = generator,
+            count = job.contactCount,
+            format = format,
+            seed = null,
+        )
+        val file = DevToolsExporter.writeToFile(context, job.generatorId, content, format)
+        onProgress(job.contactCount, job.contactCount)
+        file
+    }
+
     /**
      * Cancel current batch processing
      */

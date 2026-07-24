@@ -513,7 +513,8 @@ fun MainScreen(viewModel: MainViewModel, onOpenDeveloperTools: () -> Unit) {
                     batchJobsList = batchJobsList + newJob
                     showAddBatchJobDialog = false
                 },
-                currentSettings = fieldSettings
+                currentSettings = fieldSettings,
+                isPremium = isPremium
             )
         }
     }
@@ -1066,7 +1067,8 @@ fun TemplateItem(
 fun AddBatchJobDialog(
     onDismiss: () -> Unit,
     onAdd: (name: String, count: Int, settings: ContactFieldSettings, generatorId: String?, outputFormat: String) -> Unit,
-    currentSettings: ContactFieldSettings
+    currentSettings: ContactFieldSettings,
+    isPremium: Boolean
 ) {
     var jobName by remember { mutableStateOf("") }
     var jobCount by remember { mutableStateOf("100") }
@@ -1127,8 +1129,10 @@ fun AddBatchJobDialog(
                             }
                         )
                         tools.forEach { tool ->
+                            val locked = tool.category.requiresPremium && !isPremium
                             DropdownMenuItem(
-                                text = { Text(tool.displayName) },
+                                text = { Text(if (locked) "${tool.displayName} (Pro)" else tool.displayName) },
+                                enabled = !locked,
                                 onClick = {
                                     selectedTool = tool
                                     selectedFormat = tool.supportedFormats.first()

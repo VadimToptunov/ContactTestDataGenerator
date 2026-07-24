@@ -63,12 +63,14 @@ import kotlinx.coroutines.withContext
  * @param isPremium         whether the user has unlocked premium categories.
  * @param onRequestUpgrade  invoked when a locked category is tapped.
  * @param onExit            leaves the Developer Tools section entirely.
+ * @param onExported        records an exported file in history: (file, tool name, format, record count).
  */
 @Composable
 fun DevToolsFlow(
     isPremium: Boolean,
     onRequestUpgrade: () -> Unit,
     onExit: () -> Unit,
+    onExported: (java.io.File, String, OutputFormat, Int) -> Unit = { _, _, _, _ -> },
 ) {
     var selectedTool by remember { mutableStateOf<DevTool?>(null) }
 
@@ -90,6 +92,7 @@ fun DevToolsFlow(
         DevToolDetailScreen(
             tool = currentTool,
             onBack = { selectedTool = null },
+            onExported = onExported,
         )
     }
 }
@@ -252,7 +255,11 @@ private fun FormatChip(format: OutputFormat) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DevToolDetailScreen(tool: DevTool, onBack: () -> Unit) {
+private fun DevToolDetailScreen(
+    tool: DevTool,
+    onBack: () -> Unit,
+    onExported: (java.io.File, String, OutputFormat, Int) -> Unit,
+) {
     val context = LocalContext.current
     val clipboard = LocalClipboardManager.current
     val coroutineScope = rememberCoroutineScope()
@@ -263,6 +270,7 @@ private fun DevToolDetailScreen(tool: DevTool, onBack: () -> Unit) {
     var seedText by remember { mutableStateOf("") }
     var selectedFormat by remember(tool.id) { mutableStateOf(tool.supportedFormats.first()) }
     var output by remember { mutableStateOf<String?>(null) }
+    var lastCount by remember { mutableStateOf(0) }
     var isGenerating by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
@@ -353,7 +361,10 @@ private fun DevToolDetailScreen(tool: DevTool, onBack: () -> Unit) {
                         }
                         isGenerating = false
                         result
-                            .onSuccess { output = it }
+                            .onSuccess {
+                                output = it
+                                lastCount = count
+                            }
                             .onFailure { errorMessage = it.message ?: "Generation failed" }
                     }
                 },
@@ -383,6 +394,7 @@ private fun DevToolDetailScreen(tool: DevTool, onBack: () -> Unit) {
                     onCopy = { clipboard.setText(AnnotatedString(generated)) },
                     onShare = {
                         val file = DevToolsExporter.writeToFile(context, tool.id, generated, selectedFormat)
+                        onExported(file, tool.displayName, selectedFormat, lastCount)
                         DevToolsExporter.shareFile(context, file, selectedFormat)
                     },
                 )

@@ -68,6 +68,9 @@ fun AppRoot(viewModel: MainViewModel) {
             isPremium = isPremium,
             onRequestUpgrade = { activity?.let { viewModel.purchasePremium(it) } },
             onExit = { showDeveloperTools = false },
+            onExported = { file, dataTypeLabel, format, recordCount ->
+                viewModel.recordGeneratedFile(file, dataTypeLabel, format.extension, recordCount)
+            },
         )
     } else {
         MainScreen(

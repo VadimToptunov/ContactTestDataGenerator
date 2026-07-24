@@ -138,6 +138,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         context.startActivity(chooserIntent)
     }
 
+    /**
+     * Record an already-written file (e.g. a Developer Tools export) in history,
+     * so single-tool generations show up alongside contacts and batch outputs.
+     */
+    fun recordGeneratedFile(file: File, dataTypeLabel: String, format: String, recordCount: Int) {
+        val uri = FileProvider.getUriForFile(
+            getApplication(),
+            "${getApplication<Application>().packageName}.fileprovider",
+            file,
+        )
+        val fileInfo = VcfFileInfo(
+            uri = uri,
+            fileName = file.name,
+            contactCount = recordCount,
+            fileSizeBytes = file.length(),
+            absolutePath = file.absolutePath,
+            dataTypeLabel = dataTypeLabel,
+            format = format,
+        )
+        viewModelScope.launch {
+            fileHistoryRepository.addFile(fileInfo)
+            loadHistory()
+        }
+    }
+
     /** Share a history entry using the MIME type that matches its format. */
     fun shareGeneratedFile(fileInfo: VcfFileInfo) {
         val context = getApplication<Application>()
